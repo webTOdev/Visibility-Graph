@@ -13,11 +13,11 @@ class Line: public Geometry
  public:
 	Point * a;
     Point * b;
+
 	bool visitedStartPoint; // has the base/sweep line crossed at least one of
 	              // the verticies? 
 	bool visited;  // has the sweep line been on the line (as in, maybe it was init on it)
-	
-	//segment s;
+
 	int id;
 	long double dist; // distance from center
 	double theta_cache; // used for deciding if the dist cache needs to be refreshed
@@ -26,6 +26,8 @@ class Line: public Geometry
 	
 	Line();
 	Line(double _x1, double _y1, double _x2, double _y2);
+	Line(Point* p1,Point* p2);
+
 	~Line();
 	virtual void print();
     virtual double value();

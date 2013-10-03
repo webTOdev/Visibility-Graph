@@ -59,6 +59,31 @@ Line::Line(double x1, double y1, double x2, double y2)
 	
 	//	cout << "END LINE \n" << endl;	
 }
+
+Line::Line(Point* p1,Point* p2){
+	a=p1;
+	b=p2;
+
+	// Change ID
+		static int id_counter = 0;
+		id = id_counter++;
+
+		// Keep track of its visited history
+		visited = false;
+		visitedStartPoint = false;
+
+		//	cout << "LINE" << endl;
+		updateCalcs();
+
+		//	cout << "LINE" << endl;
+
+		// Used for checking if we need to refresh our distance amount
+		theta_cache = 3*M_PI; // some angle bigger than 2PI, aka INF
+		//distance();
+
+		//	cout << "END LINE \n" << endl;
+}
+
 Line::~Line()
 {
 	//delete a;

@@ -14,22 +14,25 @@
 #include "geometry.h"
 #include "string"
 #include "point.h"
+#include "line.h"
 
 using namespace std;
 
-class Obstacles : public Geometry
+class Obstacle : public Geometry
 {
  public:
-	vector<segment> edges;
+	vector<Line*> edges;
 	vector<Point*> vertices;
 	tPolygon hull;
 	int id;
 
-	Obstacles();
-	Obstacles(string polyStr);
+	Obstacle();
+	Obstacle(string polyStr);
 
 	void setCo(Point* v);
-	void setEdges(segment s);
+	void setEdges(Line* line);
+	vector<Line*> getEdges();
+	Point* searchPoint(double x1,double y1);
 
 	virtual void print();
 	virtual double value();
