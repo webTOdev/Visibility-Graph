@@ -23,7 +23,7 @@ class Obstacle : public Geometry
  public:
 	vector<Line*> edges;
 	vector<Point*> vertices;
-	tPolygon hull;
+	tPolygon poly;
 	int id;
 
 	Obstacle();

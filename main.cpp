@@ -17,15 +17,21 @@ int main() {
 
 	vector<Obstacle*> obsList;
 	Obstacle* obs=createObstacle("polygon((40 140,40 300,100 280,120 200,100 140,40 140))");
-	obs->print();
-	drawObs(obs);
 	obsList.push_back(obs);
 
-	obs=createObstacle("polygon((250 40,350 40,400 350,200 350,250 40))");
-	obs->print();
-	drawObs(obs);
+	obs=createObstacle("polygon((200 40,280 40,320 200,180 190,200 40))");
 	obsList.push_back(obs);
 
+	obs=createObstacle("polygon((30 330,180 350,120 450,30 330))");
+	obsList.push_back(obs);
+
+	obs=createObstacle("polygon((400 320,450 320,450 450,480 470,480 320,520 320,500 520,400 530,400 320))");
+	obsList.push_back(obs);
+
+	for(int i=0;i<obsList.size();i++){
+		obsList[i]->print();
+		drawObs(obsList[i]);
+	}
 
 
 	showPolygon();

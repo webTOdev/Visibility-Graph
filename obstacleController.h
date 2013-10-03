@@ -38,14 +38,18 @@ void get_segments(Edge const& s) {
 
 Obstacle* createObstacle(string str){
 	 o = new Obstacle(str);
-	// why hull !!!! boost::geometry::correct(cwcp); ????
 
-		bg::for_each_point(boost::geometry::exterior_ring(o->hull),
+	/*	bg::for_each_point(boost::geometry::exterior_ring(o->hull),
 				get_coordinates<tPoint>);
 
 	 //set Edge
 		bg::for_each_segment(boost::geometry::exterior_ring(o->hull),
 				get_segments<segment>);
+*/
+		bg::for_each_point(o->poly,get_coordinates<tPoint>);
+
+		 //set Edge
+			bg::for_each_segment(o->poly,get_segments<segment>);
 
 
 
