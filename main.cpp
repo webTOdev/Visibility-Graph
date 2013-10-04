@@ -11,7 +11,7 @@
 #include "drawing.h"
 #include "utility.h"
 #include <vector>
-#include "VisibilityGraph.h"
+#include "VisibilityGraphController.h"
 
 void drawObs(Obstacle* obs,Point* ori);
 int main() {
