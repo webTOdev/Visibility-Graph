@@ -13,7 +13,7 @@
 #include <vector>
 #include "VisibilityGraph.h"
 
-void drawObs(Obstacle* obs);
+void drawObs(Obstacle* obs,Point* ori);
 int main() {
 
 	vector<Obstacle*> obsList;
@@ -29,21 +29,21 @@ int main() {
 	obs=createObstacle("polygon((400 320,450 320,450 450,480 470,480 320,520 320,500 520,400 530,400 320))");
 	obsList.push_back(obs);
 
-	for(int i=0;i<obsList.size();i++){
-		obsList[i]->print();
-		drawObs(obsList[i]);
-	}
-
-	Point* ori=new Point(10,10);
-	drawLine(10,10,1000,10);
+	Point* ori=new Point(10,100);
 	VisibilityGraph* vg = new VisibilityGraph(obsList,ori);
 	vg->visibleVertices(obsList,ori);
+
+	drawLine(10,100,1000,100);
+	for(int i=0;i<obsList.size();i++){
+		obsList[i]->print();
+		drawObs(obsList[i],ori);
+	}
 
 	showPolygon();
 	return 0;
 }
 
-void drawObs(Obstacle* o){
+void drawObs(Obstacle* o,Point* ori){
 
 	vector<Point*> vertexList=getVertices(o);
 	int size= vertexList.size();
@@ -57,6 +57,8 @@ void drawObs(Obstacle* o){
 		    i++;
 		    drawCircle((*it)->x,(*it)->y);
 		    drawText((*it)->x,(*it)->y,(*it)->id);
+		    //Draw Lines for angle sorting
+		    drawLine((*it)->x,(*it)->y,ori->x,ori->y);
 		}
 
 		 double *iterator = ps;

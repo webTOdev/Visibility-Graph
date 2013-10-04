@@ -91,8 +91,9 @@ Line::~Line()
 }
 void Line::print()
 {
-	cout << "Line: x1: " << a->x << " y1: " << a->y << " x2: " << b->x
-			  << " y2: " << b->y << "\t ID: " << id << endl;
+	/*cout << "Line: x1: " << a->x << " y1: " << a->y << " x2: " << b->x
+			  << " y2: " << b->y << "\t ID: " << id << endl;*/
+	cout << "Line: Point a: " << a->id  << " Point b: " << b->id << "\t ID: " << id << endl;
 }
 double Line::value()
 {

@@ -21,12 +21,12 @@ CImgDisplay disp(img, "Obstacle Shortest Path Using Visibility Graph");      // 
 
 void drawPolygon(CImg<double> points){
 
-	img.draw_polygon(points,GREY,1);
+	img.draw_polygon(points,GREY,0.4);
 	disp.display(img);
 
 }
 void drawCircle(double x,double y){
-	img.draw_circle(x, y, 2, WHITE);
+	img.draw_circle(x, y, 1.5, WHITE);
 	disp.display(img);
 }
 
