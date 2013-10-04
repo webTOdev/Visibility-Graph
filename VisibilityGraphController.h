@@ -1,12 +1,12 @@
 /*
- * VisibilityGraph.h
+ * VisibilityGraphController1.h
  *
- *  Created on: Oct 3, 2013
+ *  Created on: Oct 4, 2013
  *      Author: nut
  */
 
-#ifndef VISIBILITYGRAPH_H_
-#define VISIBILITYGRAPH_H_
+#ifndef VISIBILITYGRAPHCONTROLLER_H_
+#define VISIBILITYGRAPHCONTROLLER_H_
 
 #include "obstacles.h"
 #include "point.h"
@@ -17,15 +17,15 @@
 
 using namespace std;
 
-class VisibilityGraph {
+class VisibilityGraphController {
 private:
 	vector<Obstacle*> obstacleList;
 	Point* p;
 public:
-	VisibilityGraph();
-	VisibilityGraph(vector<Obstacle*> obstacleList,Point* p);
-	virtual ~VisibilityGraph();
-	vector<Line*> visibleVertices(vector<Obstacle*> obstacleList,Point* p);
+	VisibilityGraphController();
+	VisibilityGraphController(vector<Obstacle*> obstacleList,Point* p);
+	vector<Line*> visibleVertices(vector<Obstacle*> obstacleList,Point* ori);
+	virtual ~VisibilityGraphController();
 };
 
-#endif /* VISIBILITYGRAPH_H_ */
+#endif /* VISIBILITYGRAPHCONTROLLER_H_ */
