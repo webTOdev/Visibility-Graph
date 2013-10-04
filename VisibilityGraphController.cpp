@@ -8,7 +8,7 @@
 #include "VisibilityGraphController.h"
 #include <map>
 
-//Using multi_index_container to store <angle,Point*> and <intersectedDistance,Point*>
+//Using multi_index_container to store <angle,Point*>
 struct key_tag {};
 struct value_tag {};
 
@@ -25,6 +25,7 @@ typedef boost::multi_index_container<
 typedef angleContainer::index<key_tag>::type  key_index_t;
 typedef angleContainer::index<value_tag>::type value_index_t;
 
+//Using multi_index_container to store <intersectedDistance,Point*>
 typedef std::pair< double, Line* > double_line;
 typedef boost::multi_index_container<
 		double_line,
@@ -40,8 +41,9 @@ typedef edgeContainer::index<value_tag>::type value_index_edge;
 
 tLinestring createHorizontalLine(Point* p);
 tLinestring createLineString(Line* line);
-edgeContainer findIntersectionWithEdge(angleContainer angles,vector<Obstacle*> obstacleList,tLinestring sweepLine,Point* ori);
+edgeContainer findIntersectionWithEdge(angleContainer angles,vector<Obstacle*> obstacleList,tLinestring sweepLine,Point* ori,edgeContainer edges);
 bool isVisible(Point* w);
+vector<Line*> generateVisibleEdge(angleContainer angles,vector<Obstacle*> obstacleList,Point* ori,edgeContainer edges);
 
 VisibilityGraphController::VisibilityGraphController() {
 	// TODO Auto-generated constructor stub
@@ -85,17 +87,18 @@ vector<Line*> VisibilityGraphController::visibleVertices(vector<Obstacle*> obsta
 	     Point* found=it->second;
 	     std::cout << "Found 2.59543 ==> " << found->id << std::endl;
 */
-	     edgeContainer visibleEdges;
-	     edgeContainer bstEdges = findIntersectionWithEdge(angles,obstacleList,centerLine,ori);
+	     edgeContainer bstEdges;
+	     bstEdges = findIntersectionWithEdge(angles,obstacleList,centerLine,ori,bstEdges);
+	     vector<Line*> visibleEdges=generateVisibleEdge(angles,obstacleList,ori,bstEdges);
 
 	return visiblePoints;
 
 }
 
 
-edgeContainer findIntersectionWithEdge(angleContainer angles,vector<Obstacle*> obstacleList,tLinestring sweepLine,Point* ori){
+edgeContainer findIntersectionWithEdge(angleContainer angles,vector<Obstacle*> obstacleList,tLinestring sweepLine,Point* ori,edgeContainer e){
 	vector<Line*> obsEdges;
-	edgeContainer edges;
+	edgeContainer edges=e;
 	for(int m=0;m<obstacleList.size();m++){
 			Obstacle* o=obstacleList[m];
 			obsEdges=o->getEdges();
@@ -127,21 +130,17 @@ vector<Line*> generateVisibleEdge(angleContainer angles,vector<Obstacle*> obstac
 	vector<Line*> obsEdges;
 	vector<Point*> obsVertices;
 	vector<Line*> visibleEdges;
-	int visEdgeIndex=0;
-	for(int m=0;m<obstacleList.size();m++){
-				Obstacle* o=obstacleList[m];
-				obsVertices=o->getVertices();
-				//Find
-				for(int n=0;n<obsVertices.size();n++){
-					Point* node=obsVertices[n];
-					if(isVisible(node))
-					{
-						ori->addVisible(node);
-						visibleEdges[visEdgeIndex]=new Line(ori->x,ori->y,node->x,node->y);
-					}
-
-				}
-		}
+	//Find
+	  key_index_t& kindex = angles.get<key_tag>();
+	  for( key_index_t::iterator k = kindex.begin(); k != kindex.end(); ++k ){
+	       // std::cout << k->first << " ==> " << k->second->id << std::endl;
+		  Point* w_i=k->second;
+		  if(isVisible(w_i))
+		  {
+			  ori->addVisible(w_i);
+			  visibleEdges.push_back(new Line(ori->x,ori->y,w_i->x,w_i->y));
+		  }
+	  }
 		return visibleEdges;
 }
 
@@ -162,6 +161,10 @@ tLinestring createLineString(Line* line){
 	 tLinestring edge = boost::assign::tuple_list_of(line->a->x, line->a->y)(line->b->x, line->b->y);
 	 return edge;
 }
+
+/*void pointsAndAssociatedEdge(vector<Obstacle*> obsList){
+	for(int i=0;i<obsList.size();ob)
+}*/
 
 
 

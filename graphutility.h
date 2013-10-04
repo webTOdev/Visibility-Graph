@@ -7,6 +7,7 @@
 
 #ifndef GRAPHUTILITY_H_
 #define GRAPHUTILITY_H_
+#include "point.h"
 
 
 //-------------------------------------------------------------------------------
@@ -14,5 +15,6 @@
 //Turning the points in to vector by x=basex-x and y = basey-y and then angle = arctan(y/x);
 //-------------------------------------------------------------------------------
 double vectorsAngle( double x, double y, double basex, double basey);
+bool isRotationClockwise(Point* a,Point* b,Point* c);
 
 #endif /* GRAPHUTILITY_H_ */

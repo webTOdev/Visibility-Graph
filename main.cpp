@@ -12,6 +12,8 @@
 #include "utility.h"
 #include <vector>
 #include "VisibilityGraphController.h"
+#include "VisibilityGraph.h"
+#include "graphutility.h"
 
 void drawObs(Obstacle* obs,Point* ori);
 int main() {
@@ -29,17 +31,24 @@ int main() {
 	obs=createObstacle("polygon((400 320,450 320,450 450,480 470,480 320,520 320,500 520,400 530,400 320))");
 	obsList.push_back(obs);
 
+	VisibilityGraph* visGraph = new VisibilityGraph(obsList);
+	visGraph->print();
 	Point* ori=new Point(10,100);
-	VisibilityGraph* vg = new VisibilityGraph(obsList,ori);
+	VisibilityGraphController* vg = new VisibilityGraphController(obsList,ori);
 	vg->visibleVertices(obsList,ori);
 
 	drawLine(10,100,1000,100);
 	for(int i=0;i<obsList.size();i++){
-		obsList[i]->print();
+		//obsList[i]->print();
 		drawObs(obsList[i],ori);
 	}
 
 	showPolygon();
+
+	Point* a = new Point(4,6);
+	Point* b = new Point(6,2);
+	Point* c = new Point(8,6);
+	std::cout << "Is Clockwise "<<isRotationClockwise(a,b,c)<<std::endl;
 	return 0;
 }
 

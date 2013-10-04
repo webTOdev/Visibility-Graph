@@ -43,5 +43,26 @@ double vectorsAngle( double x, double y, double basex, double basey)
 	return result;
 }
 
+bool isRotationClockwise(Point* a,Point* b,Point* c){
+	//Sum over the edges, (x2-x1)(y2+y1). If the result is positive the curve is clockwise
+	double x1=a->x;
+	double y1=a->y;
+	double x2=b->x;
+	double y2=b->y;
+	double x3=c->x;
+	double y3=c->y;
+
+	double s1=(x2-x1)*(y2+y1);
+	double s2=(x3-x2)*(y3+y2);
+	double s3=(x1-x3)*(y1+y1);
+
+	double sum=s1+s2+s3;
+	bool clockwise=false;
+	if(sum>0)
+		clockwise=true;
+	return clockwise;
+
+}
+
 
 
