@@ -64,11 +64,4 @@ bool isRotationClockwise(Point* a,Point* b,Point* c){
 
 }
 
-Point* findPointById( vector<Point*> points,int itemToFind){
-	for (std::vector<Point*>::iterator it = points.begin() ; it != points.end(); ++it){
-		if((*it)->id==itemToFind){
-			return *it;
-		}
-	}
-	return NULL;
-}
+

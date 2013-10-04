@@ -21,12 +21,14 @@ public:
 	vector<Line*> obsSides;
 	vector<Line*> edges;
 	vector<Obstacle*> obstacles;
-	int pointVSEdge[1000][2];
+	int pointVSPoints[1000][2];
+	int pointVSEdges[1000][2];
 
 	VisibilityGraph();
 	VisibilityGraph(vector<Obstacle*> o);
 	virtual ~VisibilityGraph();
 	void print();
+	int* getOtherEndOfThisPoint(Point* p);
 	int* getEdgesOfThisPoint(Point* p);
 
 };

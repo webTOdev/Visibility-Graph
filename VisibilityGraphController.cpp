@@ -44,6 +44,8 @@ tLinestring createLineString(Line* line);
 edgeContainer findIntersectionWithEdge(angleContainer angles,vector<Obstacle*> obstacleList,tLinestring sweepLine,Point* ori,edgeContainer edges);
 bool isVisible(Point* w);
 vector<Line*> generateVisibleEdge(angleContainer angles,vector<Obstacle*> obstacleList,Point* ori,edgeContainer edges,VisibilityGraph* vg);
+Point* findPointById( vector<Point*> points,int itemToFind);
+Line* searchLineContainingPoint(Point* point,int *lineIds,vector<Line*> lines);
 
 VisibilityGraphController::VisibilityGraphController() {
 	// TODO Auto-generated constructor stub
@@ -144,17 +146,72 @@ vector<Line*> generateVisibleEdge(angleContainer angles,vector<Obstacle*> obstac
 			  ori->addVisible(w_i);
 			  visibleEdges.push_back(new Line(ori->x,ori->y,w_i->x,w_i->y));
 			  //Check for clockwise side edges
-			  int* otherEnds=vg->getEdgesOfThisPoint(w_i);
-			  std::cout<<"w_i "<<w_i->id<<" ->"<<otherEnds[0]<<","<<otherEnds[1]<<std::endl;
+			  //Each points has two edge associated and thats why two new points
+			  int* otherEnds=vg->getOtherEndOfThisPoint(w_i);
+			  std::cout<<"Other Ends at w_i "<<w_i->id<<" ->"<<otherEnds[0]<<","<<otherEnds[1]<<std::endl;
+			  //Each points has two edge associated
+			  int* es=vg->getEdgesOfThisPoint(w_i);
+			  std::cout<<"Edges at w_i "<<w_i->id<<" ->"<<es[0]<<","<<es[1]<<std::endl;
 			  Point* c=findPointById(vg->nodes,otherEnds[0]);
-			  std::cout<<"c "<<c->id<<std::endl;
+			  double dist=bg::distance(boost::make_tuple(c->x, c->y),w_i->p);
+			  Line* ln = searchLineContainingPoint(c,es,vg->edges);
+			  if(isRotationClockwise(ori,w_i,c)){
+				  //CONFUSED ABOUT DIST
+				   edges.insert(double_line(dist,ln));
+
+			  }else{
+				  edges.erase(ln);
+			  }
+
 			  c=findPointById(vg->nodes,otherEnds[1]);
-			  std::cout<<"c "<<c->id<<std::endl;
+			  dist=bg::distance(boost::make_tuple(c->x, c->y),w_i->p);
+			  ln = searchLineContainingPoint(c,es,vg->edges);
+			  if(isRotationClockwise(ori,w_i,c)){
+				  //CONFUSED ABOUT DIST
+				  edges.insert(double_line(dist,ln));
+			  }
+			  else{
+			  	edges.erase(double_line(dist,ln));
+			  }
+
 		  }
 	  }
+	     std::cout << "Edge List :" << std::endl;
+	     key_index_edge& kin = edges.get<key_tag>();
+	 	     for( key_index_edge::iterator k = kin.begin(); k != kin.end(); ++k ){
+	 	        std::cout << k->second->print() << std::endl;
+	 	     }
+
 		return visibleEdges;
 }
 
+Point* findPointById( vector<Point*> points,int itemToFind){
+	for (std::vector<Point*>::iterator it = points.begin() ; it != points.end(); ++it){
+		if((*it)->id==itemToFind){
+			return *it;
+		}
+	}
+	return NULL;
+}
+Line* findLineById( vector<Line*> lines,int itemToFind){
+	for (std::vector<Line*>::iterator it = lines.begin() ; it != lines.end(); ++it){
+		if((*it)->id==itemToFind){
+			return *it;
+		}
+	}
+	return NULL;
+}
+//From a given point find in which edge this point is
+Line* searchLineContainingPoint(Point* point,int *lineIds,vector<Line*> lines){
+	Line* l=findLineById(lines,lineIds[0]);
+	if(l->a->id == point->id || l->b->id==point->id)
+		return l;
+	l=findLineById(lines,lineIds[1]);
+		if(l->a->id == point->id || l->b->id==point->id)
+			return l;
+
+
+}
 bool isVisible(Point* w){
 	return true;
 }

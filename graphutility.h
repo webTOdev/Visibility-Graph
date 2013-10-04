@@ -16,6 +16,6 @@
 //-------------------------------------------------------------------------------
 double vectorsAngle( double x, double y, double basex, double basey);
 bool isRotationClockwise(Point* a,Point* b,Point* c);
-Point* findPointById(vector<Point*> points,int itemToFind);
+//Point* findPointById(vector<Point*> points,int itemToFind);
 
 #endif /* GRAPHUTILITY_H_ */

@@ -16,8 +16,11 @@ VisibilityGraph::VisibilityGraph() {
 VisibilityGraph::VisibilityGraph(vector<Obstacle*> o){
 	obstacles=o;
 	for(int i=0;i<MAX;i++){
-		pointVSEdge[i][0]=-1;
-		pointVSEdge[i][1]=-1;
+		pointVSPoints[i][0]=-1;
+		pointVSPoints[i][1]=-1;
+		pointVSEdges[i][0]=-1;
+		pointVSEdges[i][1]=-1;
+
 	}
 	for(int i=0;i<o.size();i++){
 		vector<Line*> es=o[i]->getEdges();
@@ -27,16 +30,22 @@ VisibilityGraph::VisibilityGraph(vector<Obstacle*> o){
 
 		for(int j=0;j<es.size();j++){
 			Line* l=es[j];
-			if(pointVSEdge[l->a->id][0]==-1){
-				pointVSEdge[l->a->id][0]=l->b->id;
+			if(pointVSPoints[l->a->id][0]==-1){
+				pointVSPoints[l->a->id][0]=l->b->id;
+				pointVSEdges[l->a->id][0]=l->id;
 			}
-			else
-				pointVSEdge[l->a->id][1]=l->b->id;
-			if(pointVSEdge[l->b->id][0]==-1){
-				pointVSEdge[l->b->id][0]=l->a->id;
+			else{
+				pointVSPoints[l->a->id][1]=l->b->id;
+				pointVSEdges[l->a->id][1]=l->id;
 			}
-			else
-				pointVSEdge[l->b->id][1]=l->a->id;
+			if(pointVSPoints[l->b->id][0]==-1){
+				pointVSPoints[l->b->id][0]=l->a->id;
+				pointVSEdges[l->b->id][0]=l->id;
+			}
+			else{
+				pointVSPoints[l->b->id][1]=l->a->id;
+				pointVSEdges[l->b->id][1]=l->id;
+			}
 		}
 
 
@@ -69,22 +78,17 @@ void VisibilityGraph::print(){
 
 }
 
-int* VisibilityGraph::getEdgesOfThisPoint(Point* p){
-/*	for(int i=0;i<obstacles.size();i++){
-		tPolygon polygn=obstacles[i]->poly;
-		bool b = boost::geometry::overlaps(polygn, p->p);
-		if(b){
-			vector<Line*> ls=obstacles[i]->getEdges();
-			for(int j=0;j<ls.size();j++){
-				tLinestring tLine=ls[j]->line;
-				lineHasPoint( p->p,tLine);
-			}
-		}
-	}*/
-	int* otherEnds=pointVSEdge[p->id];
+int* VisibilityGraph::getOtherEndOfThisPoint(Point* p){
+	int* otherEnds=pointVSPoints[p->id];
 	return otherEnds;
 
 }
+int* VisibilityGraph::getEdgesOfThisPoint(Point* p){
+	int* e=pointVSEdges[p->id];
+	return e;
+
+}
+
 
 bool lineHasPoint(tPoint p,tLinestring l){
 	bool has=false;
