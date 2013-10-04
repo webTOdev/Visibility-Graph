@@ -11,6 +11,7 @@
 #include "drawing.h"
 #include "utility.h"
 #include <vector>
+#include "VisibilityGraph.h"
 
 void drawObs(Obstacle* obs);
 int main() {
@@ -33,6 +34,10 @@ int main() {
 		drawObs(obsList[i]);
 	}
 
+	Point* ori=new Point(10,10);
+	drawLine(10,10,1000,10);
+	VisibilityGraph* vg = new VisibilityGraph(obsList,ori);
+	vg->visibleVertices(obsList,ori);
 
 	showPolygon();
 	return 0;
@@ -50,6 +55,8 @@ void drawObs(Obstacle* o){
 		    i++;
 		    ps[i]=(*it)->y;
 		    i++;
+		    drawCircle((*it)->x,(*it)->y);
+		    drawText((*it)->x,(*it)->y,(*it)->id);
 		}
 
 		 double *iterator = ps;

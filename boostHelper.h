@@ -17,6 +17,10 @@
 #include <boost/geometry/geometries/point_xy.hpp>
 #include <boost/foreach.hpp>
 #include <boost/geometry/geometries/adapted/boost_tuple.hpp>
+#include <boost/geometry/geometries/adapted/c_array.hpp>
+#include <boost/multi_index_container.hpp>
+#include <boost/multi_index/member.hpp>
+#include <boost/multi_index/ordered_index.hpp>
 
 namespace bg = boost::geometry;
 namespace bgi = boost::geometry::index;
@@ -29,8 +33,10 @@ typedef bg::model::linestring<point> linestring_2d;
 typedef boost::tuple<double, double> tPoint;
 typedef bg::model::referring_segment<tPoint> segment;
 typedef boost::geometry::model::polygon<tPoint> tPolygon;
+typedef bg::model::linestring<tPoint> tLinestring;
 
-BOOST_GEOMETRY_REGISTER_BOOST_TUPLE_CS(cs::cartesian)
+BOOST_GEOMETRY_REGISTER_BOOST_TUPLE_CS(cs::cartesian);
+BOOST_GEOMETRY_REGISTER_C_ARRAY_CS(cs::cartesian);
 
 
 

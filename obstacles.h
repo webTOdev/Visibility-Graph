@@ -32,6 +32,7 @@ class Obstacle : public Geometry
 	void setCo(Point* v);
 	void setEdges(Line* line);
 	vector<Line*> getEdges();
+	vector<Point*> getVertices();
 	Point* searchPoint(double x1,double y1);
 
 	virtual void print();

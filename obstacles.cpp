@@ -35,6 +35,10 @@ vector<Line*> Obstacle::getEdges(){
 
 }
 
+vector<Point*> Obstacle::getVertices(){
+	return vertices;
+}
+
 Obstacle::Obstacle(){
 
 }

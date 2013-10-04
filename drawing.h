@@ -10,8 +10,11 @@
 
 #include "CImg.h"// Include CImg library header.
 #include "utility.h"
+#include <cstring>
+
 using namespace cimg_library;
 using namespace std;
+
 
 CImg<unsigned char> img(screen_size,screen_size,1,3,20);
 CImgDisplay disp(img, "Obstacle Shortest Path Using Visibility Graph");      // Display the modified image on the screen
@@ -19,10 +22,19 @@ CImgDisplay disp(img, "Obstacle Shortest Path Using Visibility Graph");      // 
 void drawPolygon(CImg<double> points){
 
 	img.draw_polygon(points,GREY,1);
-
 	disp.display(img);
 
+}
+void drawCircle(double x,double y){
+	img.draw_circle(x, y, 2, WHITE);
+	disp.display(img);
+}
 
+void drawText(double x,double y,int id){
+	char result[100];
+	itoa(id,result,10); //itoa(int num,char * buffer,10)
+	img.draw_text((x-3)*scale, (y-15)*scale,result,WHITE);
+	disp.display(img);
 }
 
 void showPolygon(){

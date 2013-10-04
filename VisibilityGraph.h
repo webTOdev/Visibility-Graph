@@ -9,9 +9,13 @@
 #define VISIBILITYGRAPH_H_
 
 #include "obstacles.h"
-#include "point.h".h"
+#include "point.h"
 #include <vector>
-namespace std {
+#include <set>
+#include "boostHelper.h"
+#include "graphutility.h"
+
+using namespace std;
 
 class VisibilityGraph {
 private:
@@ -24,5 +28,4 @@ public:
 	vector<Line*> visibleVertices(vector<Obstacle*> obstacleList,Point* p);
 };
 
-} /* namespace std */
 #endif /* VISIBILITYGRAPH_H_ */
