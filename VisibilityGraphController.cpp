@@ -5,7 +5,7 @@
  *      Author: nut
  */
 
-#include "VisibilityGraph.h"
+#include "VisibilityGraphController.h"
 #include <map>
 
 //Using multi_index_container to store <angle,Point*> and <intersectedDistance,Point*>
@@ -43,20 +43,20 @@ tLinestring createLineString(Line* line);
 edgeContainer findIntersectionWithEdge(angleContainer angles,vector<Obstacle*> obstacleList,tLinestring sweepLine,Point* ori);
 bool isVisible(Point* w);
 
-VisibilityGraph::VisibilityGraph() {
+VisibilityGraphController::VisibilityGraphController() {
 	// TODO Auto-generated constructor stub
 
 }
-VisibilityGraph::VisibilityGraph(vector<Obstacle*> obstacleList,Point* p){
+VisibilityGraphController::VisibilityGraphController(vector<Obstacle*> obstacleList,Point* p){
 	obstacleList=obstacleList;
 	p=p;
 }
 
-VisibilityGraph::~VisibilityGraph() {
+VisibilityGraphController::~VisibilityGraphController() {
 	// TODO Auto-generated destructor stub
 }
 
-vector<Line*> VisibilityGraph::visibleVertices(vector<Obstacle*> obstacleList,Point* ori){
+vector<Line*> VisibilityGraphController::visibleVertices(vector<Obstacle*> obstacleList,Point* ori){
 	vector<Line*> visiblePoints;
 	tLinestring centerLine = createHorizontalLine(ori); //SweepLine initialize to horizontal
 	point pt=ori->p; //The point around which the SweepLine rotates
@@ -103,16 +103,20 @@ edgeContainer findIntersectionWithEdge(angleContainer angles,vector<Obstacle*> o
 			for(int n=0;n<obsEdges.size();n++){
 				 Line* currentLine =obsEdges[n];
 				 tLinestring currentEdge = createLineString(currentLine);
-				 std::deque<tPoint> intersection;
-				 boost::geometry::intersection(sweepLine,currentEdge,intersection);
-				 //If intersects then insert the edge in edgeContainer according to intersecting points distance
-				 BOOST_FOREACH(tPoint const& p, intersection)
-				 {
-					 double dist=bg::distance(boost::make_tuple(ori->x, ori->y),p);
-					 std::cout << "Intersection at (" <<get<0>(p) << "," << get<1>(p)<<") with line "<<currentLine->id<<std::endl;
-				     std::cout << "Distance between "<<ori->x<<","<<ori->y<<" and "<<get<0>(p)<<","<<get<1>(p)<<" : "<<dist<<std::endl;
-				     edges.insert(double_line(dist,currentLine));
+				 bool b = boost::geometry::intersects(sweepLine,currentEdge);
+				 if(b){
+					 std::deque<tPoint> intersection;
+					 boost::geometry::intersection(sweepLine,currentEdge,intersection);
+					 //If intersects then insert the edge in edgeContainer according to intersecting points distance
+					 BOOST_FOREACH(tPoint const& p, intersection)
+					 {
+						 double dist=bg::distance(boost::make_tuple(ori->x, ori->y),p);
+						 std::cout << "Intersection at (" <<get<0>(p) << "," << get<1>(p)<<") with line "<<currentLine->id<<std::endl;
+						 std::cout << "Distance between "<<ori->x<<","<<ori->y<<" and "<<get<0>(p)<<","<<get<1>(p)<<" : "<<dist<<std::endl;
+						 edges.insert(double_line(dist,currentLine));
+					 }
 				 }
+
 			}
 	}
 	return edges;
@@ -145,16 +149,18 @@ bool isVisible(Point* w){
 	return true;
 }
 
+//LineString creation sample one
 tLinestring createHorizontalLine(Point* p){
 
 	 bg::model::linestring<tPoint> line;
 	 const double c[][2] = { {p->x, p->y}, {(p->x)+1000, p->y}};
-	  bg::assign_points(line, c);
-	  return line;
+	 bg::assign_points(line, c);
+	 return line;
 }
-
+//LineString creation sample two
 tLinestring createLineString(Line* line){
 	 tLinestring edge = boost::assign::tuple_list_of(line->a->x, line->a->y)(line->b->x, line->b->y);
+	 return edge;
 }
 
 
