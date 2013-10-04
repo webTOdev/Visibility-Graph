@@ -9,7 +9,7 @@ Point::Point(double _x1, double _y1)
 {
 	x = _x1;
 	y = _y1;
-	p=point(x,y);
+	p=tPoint(x,y);
 	static int id_counter = 0;
 	id = id_counter++;
 	index=0;

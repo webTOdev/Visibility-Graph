@@ -13,7 +13,7 @@ class Line: public Geometry
  public:
 	Point * a;
     Point * b;
-
+    tLinestring line;
 	bool visitedStartPoint; // has the base/sweep line crossed at least one of
 	              // the verticies? 
 	bool visited;  // has the sweep line been on the line (as in, maybe it was init on it)

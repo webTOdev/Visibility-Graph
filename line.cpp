@@ -19,6 +19,7 @@ Line::Line(double x1, double y1, double x2, double y2)
 	{
 		a = new Point(x1, y1);
 		b = new Point(x2, y2);
+		line = boost::assign::tuple_list_of(x1, y1)(x2, y2);
 	}
 	/*else
 	if(x1==x2){
@@ -37,6 +38,7 @@ Line::Line(double x1, double y1, double x2, double y2)
 	{
 		b = new Point(x1, y1);
 		a = new Point(x2, y2);
+		line = boost::assign::tuple_list_of(x2, y2)(x1, y1);
 	}
 
 

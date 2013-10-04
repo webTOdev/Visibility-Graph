@@ -14,7 +14,7 @@ class Point: public Geometry
 	int id; // for removing, comparing, etc
 	long double theta; // anglular amount from base line
 	int index;
-	point p;
+	tPoint p;
 	
 	Point();
 	Point(double _x1, double _y1);

@@ -43,7 +43,7 @@ tLinestring createHorizontalLine(Point* p);
 tLinestring createLineString(Line* line);
 edgeContainer findIntersectionWithEdge(angleContainer angles,vector<Obstacle*> obstacleList,tLinestring sweepLine,Point* ori,edgeContainer edges);
 bool isVisible(Point* w);
-vector<Line*> generateVisibleEdge(angleContainer angles,vector<Obstacle*> obstacleList,Point* ori,edgeContainer edges);
+vector<Line*> generateVisibleEdge(angleContainer angles,vector<Obstacle*> obstacleList,Point* ori,edgeContainer edges,VisibilityGraph* vg);
 
 VisibilityGraphController::VisibilityGraphController() {
 	// TODO Auto-generated constructor stub
@@ -53,15 +53,19 @@ VisibilityGraphController::VisibilityGraphController(vector<Obstacle*> obstacleL
 	obstacleList=obstacleList;
 	p=p;
 }
+VisibilityGraphController::VisibilityGraphController(VisibilityGraph* vg){
+	visGraph=vg;
+	obstacleList=visGraph->obstacles;
+}
 
 VisibilityGraphController::~VisibilityGraphController() {
 	// TODO Auto-generated destructor stub
 }
 
-vector<Line*> VisibilityGraphController::visibleVertices(vector<Obstacle*> obstacleList,Point* ori){
+vector<Line*> VisibilityGraphController::visibleVertices(Point* ori){
 	vector<Line*> visiblePoints;
 	tLinestring centerLine = createHorizontalLine(ori); //SweepLine initialize to horizontal
-	point pt=ori->p; //The point around which the SweepLine rotates
+	tPoint pt=ori->p; //The point around which the SweepLine rotates
 	angleContainer angles;
 
 	//Iterate over each of the obstacles and sort all the points
@@ -77,11 +81,11 @@ vector<Line*> VisibilityGraphController::visibleVertices(vector<Obstacle*> obsta
 	}
 		//Took help from  multi index facility of boost
 	    //   std::cout << "Angle List :" << std::endl;
-	     key_index_t& kindex = angles.get<key_tag>();
+	   /*  key_index_t& kindex = angles.get<key_tag>();
 	     for( key_index_t::iterator k = kindex.begin(); k != kindex.end(); ++k ){
 	       // std::cout << k->first << " ==> " << k->second->id << std::endl;
 	     }
-
+		*/
 	     //Search in the container for a point with given angle
 	    /* anglesContainer::iterator it = angles.get<0>().find(2.59543);
 	     Point* found=it->second;
@@ -89,7 +93,7 @@ vector<Line*> VisibilityGraphController::visibleVertices(vector<Obstacle*> obsta
 */
 	     edgeContainer bstEdges;
 	     bstEdges = findIntersectionWithEdge(angles,obstacleList,centerLine,ori,bstEdges);
-	     vector<Line*> visibleEdges=generateVisibleEdge(angles,obstacleList,ori,bstEdges);
+	     vector<Line*> visibleEdges=generateVisibleEdge(angles,obstacleList,ori,bstEdges,visGraph);
 
 	return visiblePoints;
 
@@ -126,7 +130,7 @@ edgeContainer findIntersectionWithEdge(angleContainer angles,vector<Obstacle*> o
 
 }
 
-vector<Line*> generateVisibleEdge(angleContainer angles,vector<Obstacle*> obstacleList,Point* ori,edgeContainer edges){
+vector<Line*> generateVisibleEdge(angleContainer angles,vector<Obstacle*> obstacleList,Point* ori,edgeContainer edges,VisibilityGraph* vg){
 	vector<Line*> obsEdges;
 	vector<Point*> obsVertices;
 	vector<Line*> visibleEdges;
@@ -139,6 +143,13 @@ vector<Line*> generateVisibleEdge(angleContainer angles,vector<Obstacle*> obstac
 		  {
 			  ori->addVisible(w_i);
 			  visibleEdges.push_back(new Line(ori->x,ori->y,w_i->x,w_i->y));
+			  //Check for clockwise side edges
+			  int* otherEnds=vg->getEdgesOfThisPoint(w_i);
+			  std::cout<<"w_i "<<w_i->id<<" ->"<<otherEnds[0]<<","<<otherEnds[1]<<std::endl;
+			  Point* c=findPointById(vg->nodes,otherEnds[0]);
+			  std::cout<<"c "<<c->id<<std::endl;
+			  c=findPointById(vg->nodes,otherEnds[1]);
+			  std::cout<<"c "<<c->id<<std::endl;
 		  }
 	  }
 		return visibleEdges;
@@ -162,9 +173,9 @@ tLinestring createLineString(Line* line){
 	 return edge;
 }
 
-/*void pointsAndAssociatedEdge(vector<Obstacle*> obsList){
-	for(int i=0;i<obsList.size();ob)
-}*/
+void VisibilityGraphController::pointsAndAssociatedEdge(vector<Obstacle*> obsList){
+	for(int i=0;i<obsList.size();obsList){}
+}
 
 
 

@@ -34,8 +34,8 @@ int main() {
 	VisibilityGraph* visGraph = new VisibilityGraph(obsList);
 	visGraph->print();
 	Point* ori=new Point(10,100);
-	VisibilityGraphController* vg = new VisibilityGraphController(obsList,ori);
-	vg->visibleVertices(obsList,ori);
+	VisibilityGraphController* vg = new VisibilityGraphController(visGraph);
+	vg->visibleVertices(ori);
 
 	drawLine(10,100,1000,100);
 	for(int i=0;i<obsList.size();i++){

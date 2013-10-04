@@ -14,18 +14,22 @@
 #include <set>
 #include "boostHelper.h"
 #include "graphutility.h"
+#include "VisibilityGraph.h"
 
 using namespace std;
 
 class VisibilityGraphController {
 private:
 	vector<Obstacle*> obstacleList;
+	VisibilityGraph* visGraph;
 	Point* p;
 public:
 	VisibilityGraphController();
 	VisibilityGraphController(vector<Obstacle*> obstacleList,Point* p);
-	vector<Line*> visibleVertices(vector<Obstacle*> obstacleList,Point* ori);
+	VisibilityGraphController(VisibilityGraph* vg);
+	vector<Line*> visibleVertices(Point* ori);
 	virtual ~VisibilityGraphController();
+	void pointsAndAssociatedEdge(vector<Obstacle*> obsList);
 };
 
 #endif /* VISIBILITYGRAPHCONTROLLER_H_ */
