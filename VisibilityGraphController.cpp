@@ -20,6 +20,7 @@ Obstacle* getObsCoveringPoint(Point* w_i,vector<Obstacle*> obsList);
 bool doesLineAndPolygonIntersects(tLinestring ls,tPolygon p);
 void printEdgeList(edgeContainer edges);
 bool doesTwoLineTouches(tLinestring ls1,tLinestring ls2,Point* w_i);
+edgeContainer eraseOneEdgeFromEdgeList(edgeContainer edges,Line* ln);
 
 VisibilityGraphController::VisibilityGraphController() {
 	// TODO Auto-generated constructor stub
@@ -152,15 +153,14 @@ vector<Line*> VisibilityGraphController::generateVisibleEdge(angleContainer angl
 			 // double dist=bg::distance(boost::make_tuple(c->x, c->y),w_i->p);
 			  Line* ln = searchLineContainingPoint(c,es,vg->obsSides);
 			  if(isRotationClockwise(ori,w_i,c)){
-				  //CONFUSED ABOUT DIST
+				  //CONFUSED ABOUT DIST currently storing as origin to obsSide distance
 				  std::cout<<"Line "<<ln->id<<" and Point "<<c->x<<","<<c->y<< " is at clockwise side of Point "<<ori->id<<","<<w_i->id<<std::endl;
+				  dist=bg::distance(boost::make_tuple(ori->x, ori->y),createLineString(ln));
 				  edges.insert(double_line(dist,ln));
 
 			  }else{
 				  std::cout<<"Line "<<ln->id<<" and Point "<<c->x<<","<<c->y<<" is at anti-clockwise side of "<<ori->id<<","<<w_i->id<<std::endl;
-				  edges.erase(dist);
-				  std::cout<<"Erasing at 1 Dist : "<<dist<<std::endl;
-				  printEdgeList(edges);
+				  edges = eraseOneEdgeFromEdgeList(edges,ln);
 			  }
 
 			  c=findPointById(vg->nodes,otherEnds[1]);
@@ -168,14 +168,13 @@ vector<Line*> VisibilityGraphController::generateVisibleEdge(angleContainer angl
 			  ln = searchLineContainingPoint(c,es,vg->obsSides);
 			  if(isRotationClockwise(ori,w_i,c)){
 				  //CONFUSED ABOUT DIST
+				  dist=bg::distance(boost::make_tuple(ori->x, ori->y),createLineString(ln));
 				  std::cout<<"Line "<<ln->id<<" and Point "<<c->x<<","<<c->y<<" is at clockwise side of "<<ori->id<<","<<w_i->id<<std::endl;
 				  edges.insert(double_line(dist,ln));
 			  }
 			  else{
 				  std::cout<<"Line "<<ln->id<<" and Point "<<c->x<<","<<c->y<<" is at anti-clockwise side of "<<ori->id<<","<<w_i->id<<std::endl;
-				  edges.erase(dist);
-				  std::cout<<"Erasing at 2 Dist : "<<dist<<std::endl;
-				  printEdgeList(edges);
+				  edges =eraseOneEdgeFromEdgeList(edges,ln);
 			  }
 
 			  std::cout<<"After Edge Operation "<<std::endl;
@@ -186,6 +185,17 @@ vector<Line*> VisibilityGraphController::generateVisibleEdge(angleContainer angl
 		return visibleEdges;
 }
 
+edgeContainer eraseOneEdgeFromEdgeList(edgeContainer edges,Line* ln){
+	key_index_edge& kin = edges.get<key_tag>();
+	for( key_index_edge::iterator k = kin.begin(); k != kin.end(); ++k ){
+		if(k->second->id == ln->id){
+			std::cout << "Erasing Line :" <<k->second->id<< std::endl;
+			std::cout << "Dist :" <<k->first<< std::endl;
+			kin.erase(k++);
+		}
+	}
+	return edges;
+}
 
 void printEdgeList(edgeContainer edges){
 	std::cout << "Edge List :" << std::endl;
