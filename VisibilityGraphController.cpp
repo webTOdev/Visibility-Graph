@@ -8,44 +8,16 @@
 #include "VisibilityGraphController.h"
 #include <map>
 
-//Using multi_index_container to store <angle,Point*>
-struct key_tag {};
-struct value_tag {};
-
-typedef std::pair< double, Point* > double_point;
-typedef boost::multi_index_container<
-    double_point,
-    boost::multi_index::indexed_by<
-      boost::multi_index::ordered_non_unique< boost::multi_index::tag< key_tag >,
-          boost::multi_index::member< double_point, double, &double_point::first > >,
-      boost::multi_index::ordered_unique< boost::multi_index::tag< value_tag >,
-          boost::multi_index::member< double_point, Point*, &double_point::second > >
-> >  angleContainer;
-
-typedef angleContainer::index<key_tag>::type  key_index_t;
-typedef angleContainer::index<value_tag>::type value_index_t;
-
-//Using multi_index_container to store <intersectedDistance,Point*>
-typedef std::pair< double, Line* > double_line;
-typedef boost::multi_index_container<
-		double_line,
-    boost::multi_index::indexed_by<
-      boost::multi_index::ordered_non_unique< boost::multi_index::tag< key_tag >,
-          boost::multi_index::member< double_line, double, &double_line::first > >,
-      boost::multi_index::ordered_unique< boost::multi_index::tag< value_tag >,
-          boost::multi_index::member< double_line, Line*, &double_line::second > >
-> >  edgeContainer;
-
-typedef edgeContainer::index<key_tag>::type  key_index_edge;
-typedef edgeContainer::index<value_tag>::type value_index_edge;
 
 tLinestring createHorizontalLine(Point* p);
 tLinestring createLineString(Line* line);
 edgeContainer findIntersectionWithEdge(angleContainer angles,vector<Obstacle*> obstacleList,tLinestring sweepLine,Point* ori,edgeContainer edges);
-bool isVisible(Point* w);
-vector<Line*> generateVisibleEdge(angleContainer angles,vector<Obstacle*> obstacleList,Point* ori,edgeContainer edges,VisibilityGraph* vg);
+//bool isVisible(Point* w);
+//vector<Line*> generateVisibleEdge(angleContainer angles,vector<Obstacle*> obstacleList,Point* ori,edgeContainer edges,VisibilityGraph* vg);
 Point* findPointById( vector<Point*> points,int itemToFind);
-Line* searchLineContainingPoint(Point* point,int *lineIds,vector<Line*> lines);
+Line* searchLineContainingPoint(Point* pt,int *lineIds,vector<Line*> lines);
+Obstacle* getObsCoveringPoint(Point* w_i,vector<Obstacle*> obsList);
+bool doesLineAndPolygonIntersects(tLinestring ls,tPolygon p);
 
 VisibilityGraphController::VisibilityGraphController() {
 	// TODO Auto-generated constructor stub
@@ -82,12 +54,12 @@ vector<Line*> VisibilityGraphController::visibleVertices(Point* ori){
 		}
 	}
 		//Took help from  multi index facility of boost
-	    //   std::cout << "Angle List :" << std::endl;
-	   /*  key_index_t& kindex = angles.get<key_tag>();
+	     std::cout << "Angle List :" << std::endl;
+	     key_index_t& kindex = angles.get<key_tag>();
 	     for( key_index_t::iterator k = kindex.begin(); k != kindex.end(); ++k ){
-	       // std::cout << k->first << " ==> " << k->second->id << std::endl;
+	        std::cout << k->first << " ==> " << k->second->id << std::endl;
 	     }
-		*/
+
 	     //Search in the container for a point with given angle
 	    /* anglesContainer::iterator it = angles.get<0>().find(2.59543);
 	     Point* found=it->second;
@@ -132,17 +104,33 @@ edgeContainer findIntersectionWithEdge(angleContainer angles,vector<Obstacle*> o
 
 }
 
-vector<Line*> generateVisibleEdge(angleContainer angles,vector<Obstacle*> obstacleList,Point* ori,edgeContainer edges,VisibilityGraph* vg){
+vector<Line*> VisibilityGraphController::generateVisibleEdge(angleContainer angles,vector<Obstacle*> obstacleList,Point* ori,edgeContainer edges,VisibilityGraph* vg){
 	vector<Line*> obsEdges;
 	vector<Point*> obsVertices;
 	vector<Line*> visibleEdges;
+	Line* sweepLine;
+
+	double dist = 12345678; //Very large value to avoid distance calculation it was required at step 1
+	std::cout << "Origin at "<<ori->x<<","<<ori->y<<std::endl;
+	//for i=1 checkingat Visible(wi) 2nd line
+	int index=1;
+	//Keep w_i -1 th Point
+	Point* w_i_1;
 	//Find
 	  key_index_t& kindex = angles.get<key_tag>();
 	  for( key_index_t::iterator k = kindex.begin(); k != kindex.end(); ++k ){
 	       // std::cout << k->first << " ==> " << k->second->id << std::endl;
 		  Point* w_i=k->second;
-		  if(isVisible(w_i))
+		  if(index!=1){
+			  w_i_1=(--k)->second;
+			  ++k;
+			  std::cout << "Sweeps at Point w_i: "<<w_i->id<<" - "<<w_i->x<<","<<w_i->y<<" w_i-1 "<<w_i_1->id<<std::endl;
+		  }
+
+		  sweepLine=new Line(ori->x,ori->y,w_i->x,w_i->y);
+		  if(isVisible(w_i,ori,sweepLine));
 		  {
+			  w_i->visited=true;
 			  ori->addVisible(w_i);
 			  visibleEdges.push_back(new Line(ori->x,ori->y,w_i->x,w_i->y));
 			  //Check for clockwise side edges
@@ -153,34 +141,41 @@ vector<Line*> generateVisibleEdge(angleContainer angles,vector<Obstacle*> obstac
 			  int* es=vg->getEdgesOfThisPoint(w_i);
 			  std::cout<<"Edges at w_i "<<w_i->id<<" ->"<<es[0]<<","<<es[1]<<std::endl;
 			  Point* c=findPointById(vg->nodes,otherEnds[0]);
-			  double dist=bg::distance(boost::make_tuple(c->x, c->y),w_i->p);
-			  Line* ln = searchLineContainingPoint(c,es,vg->edges);
+			 // double dist=bg::distance(boost::make_tuple(c->x, c->y),w_i->p);
+			  Line* ln = searchLineContainingPoint(c,es,vg->obsSides);
 			  if(isRotationClockwise(ori,w_i,c)){
 				  //CONFUSED ABOUT DIST
+				  std::cout<<"Line "<<ln->id<<" and Point "<<c->x<<","<<c->y<< " is at clockwise side of Point "<<ori->id<<","<<w_i->id<<std::endl;
 				   edges.insert(double_line(dist,ln));
 
 			  }else{
-				  edges.erase(ln);
+				  std::cout<<"Line "<<ln->id<<" and Point "<<c->x<<","<<c->y<<" is at anti-clockwise side of "<<ori->id<<","<<w_i->id<<std::endl;
+				  edges.erase(dist);
 			  }
 
 			  c=findPointById(vg->nodes,otherEnds[1]);
-			  dist=bg::distance(boost::make_tuple(c->x, c->y),w_i->p);
-			  ln = searchLineContainingPoint(c,es,vg->edges);
+			//  dist=bg::distance(boost::make_tuple(c->x, c->y),w_i->p);
+			  ln = searchLineContainingPoint(c,es,vg->obsSides);
 			  if(isRotationClockwise(ori,w_i,c)){
 				  //CONFUSED ABOUT DIST
+				  std::cout<<"Line "<<ln->id<<" and Point "<<c->x<<","<<c->y<<" is at clockwise side of "<<ori->id<<","<<w_i->id<<std::endl;
 				  edges.insert(double_line(dist,ln));
 			  }
 			  else{
-			  	edges.erase(double_line(dist,ln));
+				  std::cout<<"Line "<<ln->id<<" and Point "<<c->x<<","<<c->y<<" is at anti-clockwise side of "<<ori->id<<","<<w_i->id<<std::endl;
+			  	edges.erase(dist);
 			  }
 
+			  std::cout << "Edge List :" << std::endl;
+			  key_index_edge& kin = edges.get<key_tag>();
+			  for( key_index_edge::iterator k = kin.begin(); k != kin.end(); ++k ){
+			  	 	 k->second->print();
+			  }
+
+
 		  }
+		  index++;
 	  }
-	     std::cout << "Edge List :" << std::endl;
-	     key_index_edge& kin = edges.get<key_tag>();
-	 	     for( key_index_edge::iterator k = kin.begin(); k != kin.end(); ++k ){
-	 	        std::cout << k->second->print() << std::endl;
-	 	     }
 
 		return visibleEdges;
 }
@@ -195,6 +190,7 @@ Point* findPointById( vector<Point*> points,int itemToFind){
 }
 Line* findLineById( vector<Line*> lines,int itemToFind){
 	for (std::vector<Line*>::iterator it = lines.begin() ; it != lines.end(); ++it){
+		//std::cout<<"Searching "<<itemToFind<<" Line check "<<(*it)->id<<std::endl;
 		if((*it)->id==itemToFind){
 			return *it;
 		}
@@ -202,20 +198,48 @@ Line* findLineById( vector<Line*> lines,int itemToFind){
 	return NULL;
 }
 //From a given point find in which edge this point is
-Line* searchLineContainingPoint(Point* point,int *lineIds,vector<Line*> lines){
+Line* searchLineContainingPoint(Point* pt,int *lineIds,vector<Line*> lines){
 	Line* l=findLineById(lines,lineIds[0]);
-	if(l->a->id == point->id || l->b->id==point->id)
-		return l;
+	//l->print();
+	if((l->a->id) == (pt->id) || (l->b->id)==(pt->id)){
+	return l;
+	}
+
 	l=findLineById(lines,lineIds[1]);
-		if(l->a->id == point->id || l->b->id==point->id)
-			return l;
+	if((l->a->id) == (pt->id) || (l->b->id)==(pt->id)){
+		return l;
+	}
 
 
 }
-bool isVisible(Point* w){
+bool VisibilityGraphController::isVisible(Point* w_i,Point* ori,Line* sweepLine){
+	//If sweepline insectes interio of the polygon of which w_i is a vertex
+	tLinestring line=createLineString(sweepLine);
+	tPolygon poly=getObsCoveringPoint(w_i,obstacleList)->poly;
+	if(doesLineAndPolygonIntersects(line,poly))
+		return false;
+
 	return true;
 }
+Obstacle* getObsCoveringPoint(Point* w_i,vector<Obstacle*> obsList){
+	for(int i=0;i<obsList.size();i++){
+		if(obsList[i]->searchPoint(w_i->x,w_i->y)){
+			return obsList[i];
+		}
+	}
+}
 
+bool doesLineAndPolygonIntersects(tLinestring ls,tPolygon p){
+	std::vector<turn_info> turns;
+	bg::detail::get_turns::no_interrupt_policy policy;
+	bg::get_turns<false, false, bg::detail::overlay::assign_null_policy>(ls, p, turns, policy);
+    if(turns.size()>0){
+    	std::cout<<"YES"<<std::endl;
+	   	return true;
+    }
+    return false;
+
+}
 //LineString creation sample one
 tLinestring createHorizontalLine(Point* p){
 

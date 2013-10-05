@@ -35,10 +35,12 @@ typedef boost::tuple<double, double> tPoint;
 typedef bg::model::referring_segment<tPoint> segment;
 typedef boost::geometry::model::polygon<tPoint> tPolygon;
 typedef bg::model::linestring<tPoint> tLinestring;
+typedef bg::model::ring<tPoint> tRing;
 
 BOOST_GEOMETRY_REGISTER_BOOST_TUPLE_CS(cs::cartesian);
 BOOST_GEOMETRY_REGISTER_C_ARRAY_CS(cs::cartesian);
 
-
+// Calculate intersection points (turn points)
+typedef bg::detail::overlay::turn_info<tPoint> turn_info;
 
 #endif /* BOOSTHELPER_H_ */

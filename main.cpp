@@ -45,9 +45,9 @@ int main() {
 
 	showPolygon();
 
-	Point* a = new Point(4,6);
-	Point* b = new Point(6,2);
-	Point* c = new Point(8,6);
+	Point* a = new Point(10,10);
+	Point* b = new Point(15,3);
+	Point* c = new Point(17,30);
 	std::cout << "Is Clockwise "<<isRotationClockwise(a,b,c)<<std::endl;
 	return 0;
 }

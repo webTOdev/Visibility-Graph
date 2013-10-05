@@ -15,6 +15,7 @@ class Point: public Geometry
 	long double theta; // anglular amount from base line
 	int index;
 	tPoint p;
+	bool visited;
 	
 	Point();
 	Point(double _x1, double _y1);
