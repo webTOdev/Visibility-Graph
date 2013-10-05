@@ -35,7 +35,7 @@ int main() {
 	visGraph->print();
 	Point* ori=new Point(10,100);
 	VisibilityGraphController* vg = new VisibilityGraphController(visGraph);
-	vg->visibleVertices(ori);
+	vector<Line*> visEdges=vg->visibleVertices(ori);
 
 	drawLine(10,100,1000,100);
 	for(int i=0;i<obsList.size();i++){
@@ -45,13 +45,16 @@ int main() {
 
 	showPolygon();
 
-	Point* a = new Point(10,10);
-	Point* b = new Point(15,3);
-	Point* c = new Point(17,30);
-	std::cout << "Is Clockwise "<<isRotationClockwise(a,b,c)<<std::endl;
 	return 0;
 }
 
+void drawVisEdges(vector<Line*> visEdges){
+
+	for(int i=0;i<visEdges.size();i++){
+		std::cout<<"Visible Edges "<<visEdges[i]->a->id<<"->"<<visEdges[i]->b->id<<std::endl;
+		drawEdge(visEdges[i]);
+	}
+}
 void drawObs(Obstacle* o,Point* ori){
 
 	vector<Point*> vertexList=getVertices(o);
@@ -67,7 +70,7 @@ void drawObs(Obstacle* o,Point* ori){
 		    drawCircle((*it)->x,(*it)->y);
 		    drawText((*it)->x,(*it)->y,(*it)->id);
 		    //Draw Lines for angle sorting
-		    drawLine((*it)->x,(*it)->y,ori->x,ori->y);
+		  //  drawLine((*it)->x,(*it)->y,ori->x,ori->y);
 		}
 
 		 double *iterator = ps;

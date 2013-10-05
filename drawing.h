@@ -57,6 +57,14 @@ void drawLine(double x1,double y1,double x2,double y2){
 
 
 }
+void drawEdge(Line* a){
+
+	img.draw_line(a->a->x,a->a->y,a->b->x,a->b->y,BLUE);
+
+	disp.display(img);
+
+
+}
 
 
 #endif /* DRAWING_H_ */

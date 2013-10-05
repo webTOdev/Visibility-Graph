@@ -64,4 +64,25 @@ bool isRotationClockwise(Point* a,Point* b,Point* c){
 
 }
 
+bool checkCoLinear(Point* a,Point* b,Point* c){
+	//Sum over the edges, (x2-x1)(y2+y1). If the result is positive the curve is clockwise
+	double x1=a->x;
+	double y1=a->y;
+	double x2=b->x;
+	double y2=b->y;
+	double x3=c->x;
+	double y3=c->y;
+
+	double s1=(y1-y2)/(x1-x2);
+	double s2=(y2-y3)/(x2-x3);
+
+
+	bool colinear=false;
+	if(s1 == s2 )
+		colinear=true;
+	return colinear;
+
+}
+
+
 
