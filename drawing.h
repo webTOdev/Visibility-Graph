@@ -30,10 +30,10 @@ void drawCircle(double x,double y){
 	disp.display(img);
 }
 
-void drawText(double x,double y,int id){
+void drawText(double x,double y,int id,const unsigned char color[]){
 	char result[100];
 	itoa(id,result,10); //itoa(int num,char * buffer,10)
-	img.draw_text((x-3)*scale, (y-15)*scale,result,WHITE);
+	img.draw_text((x-3)*scale, (y-15)*scale,result,color);
 	disp.display(img);
 }
 

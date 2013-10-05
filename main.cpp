@@ -41,6 +41,14 @@ int main() {
 	for(int i=0;i<obsList.size();i++){
 		//obsList[i]->print();
 		drawObs(obsList[i],ori);
+
+	}
+
+	vector<Line*> obsSide=visGraph->obsSides;
+	for(int  i=0;i<obsSide.size();i++){
+		Line* l= obsSide[i];
+		drawText(((l->a->x)+(l->b->x))/2,  ((l->a->y)+(l->b->y))/2,l->id,WHITE);
+		//drawText(l->b->x-8,  l->b->y-15,l->id);
 	}
 
 	showPolygon();
@@ -68,7 +76,7 @@ void drawObs(Obstacle* o,Point* ori){
 		    ps[i]=(*it)->y;
 		    i++;
 		    drawCircle((*it)->x,(*it)->y);
-		    drawText((*it)->x,(*it)->y,(*it)->id);
+		    drawText((*it)->x,(*it)->y,(*it)->id,RED);
 		    //Draw Lines for angle sorting
 		  //  drawLine((*it)->x,(*it)->y,ori->x,ori->y);
 		}

@@ -18,6 +18,7 @@ Point* findPointById( vector<Point*> points,int itemToFind);
 Line* searchLineContainingPoint(Point* pt,int *lineIds,vector<Line*> lines);
 Obstacle* getObsCoveringPoint(Point* w_i,vector<Obstacle*> obsList);
 bool doesLineAndPolygonIntersects(tLinestring ls,tPolygon p);
+void printEdgeList(edgeContainer edges);
 
 VisibilityGraphController::VisibilityGraphController() {
 	// TODO Auto-generated constructor stub
@@ -91,8 +92,8 @@ edgeContainer findIntersectionWithEdge(angleContainer angles,vector<Obstacle*> o
 					 BOOST_FOREACH(tPoint const& p, intersection)
 					 {
 						 double dist=bg::distance(boost::make_tuple(ori->x, ori->y),p);
-						 std::cout << "Intersection at (" <<get<0>(p) << "," << get<1>(p)<<") with line "<<currentLine->id<<std::endl;
-						 std::cout << "Distance between "<<ori->x<<","<<ori->y<<" and "<<get<0>(p)<<","<<get<1>(p)<<" : "<<dist<<std::endl;
+						// std::cout << "Intersection at (" <<get<0>(p) << "," << get<1>(p)<<") with line "<<currentLine->id<<std::endl;
+						 //std::cout << "Distance between "<<ori->x<<","<<ori->y<<" and "<<get<0>(p)<<","<<get<1>(p)<<" : "<<dist<<std::endl;
 						 edges.insert(double_line(dist,currentLine));
 					 }
 				 }
@@ -119,13 +120,16 @@ vector<Line*> VisibilityGraphController::generateVisibleEdge(angleContainer angl
 	  key_index_t& kindex = angles.get<key_tag>();
 	  for( key_index_t::iterator k = kindex.begin(); k != kindex.end(); ++k ){
 	       // std::cout << k->first << " ==> " << k->second->id << std::endl;
+		  printEdgeList(edges);
 		  Point* w_i=k->second;
 		  if(index!=1){
 			  w_i_1=(--k)->second;
 			  ++k;
 			  std::cout << "Sweeps at Point w_i: "<<w_i->id<<" - "<<w_i->x<<","<<w_i->y<<" w_i-1 "<<w_i_1->id<<std::endl;
 		  }
-
+		  else
+			  std::cout << "Sweeps starts at Point w_i: "<<w_i->id<<std::endl;
+		  index++;
 		  sweepLine=new Line(ori->x,ori->y,w_i->x,w_i->y);
 		  if(isVisible(w_i,ori,sweepLine,w_i_1,index,edges))
 		  {
@@ -133,6 +137,7 @@ vector<Line*> VisibilityGraphController::generateVisibleEdge(angleContainer angl
 			  ori->addVisible(w_i);
 			  visibleEdges.push_back(new Line(ori->x,ori->y,w_i->x,w_i->y));
 			  std::cout<<"Visible Edges "<<ori->id<<"->"<<w_i->id<<std::endl;
+		  }
 			  //Check for clockwise side edges
 			  //Each points has two edge associated and thats why two new points
 			  int* otherEnds=vg->getOtherEndOfThisPoint(w_i);
@@ -166,20 +171,26 @@ vector<Line*> VisibilityGraphController::generateVisibleEdge(angleContainer angl
 			  	edges.erase(dist);
 			  }
 
-			  std::cout << "Edge List :" << std::endl;
+			/*  std::cout << "Edge List :" << std::endl;
 			  key_index_edge& kin = edges.get<key_tag>();
 			  for( key_index_edge::iterator k = kin.begin(); k != kin.end(); ++k ){
 			  	 	 k->second->print();
 			  }
+			  */
+			  printEdgeList(edges);
 
-
-		  }
-		  index++;
 	  }
 
 		return visibleEdges;
 }
 
+void printEdgeList(edgeContainer edges){
+	std::cout << "Edge List :" << std::endl;
+	key_index_edge& kin = edges.get<key_tag>();
+	for( key_index_edge::iterator k = kin.begin(); k != kin.end(); ++k ){
+		k->second->print();
+	}
+}
 Point* findPointById( vector<Point*> points,int itemToFind){
 	for (std::vector<Point*>::iterator it = points.begin() ; it != points.end(); ++it){
 		if((*it)->id==itemToFind){
