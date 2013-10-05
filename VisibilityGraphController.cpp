@@ -19,6 +19,7 @@ Line* searchLineContainingPoint(Point* pt,int *lineIds,vector<Line*> lines);
 Obstacle* getObsCoveringPoint(Point* w_i,vector<Obstacle*> obsList);
 bool doesLineAndPolygonIntersects(tLinestring ls,tPolygon p);
 void printEdgeList(edgeContainer edges);
+bool doesTwoLineTouches(tLinestring ls1,tLinestring ls2,Point* w_i);
 
 VisibilityGraphController::VisibilityGraphController() {
 	// TODO Auto-generated constructor stub
@@ -111,7 +112,7 @@ vector<Line*> VisibilityGraphController::generateVisibleEdge(angleContainer angl
 	Line* sweepLine;
 
 	double dist = 12345678; //Very large value to avoid distance calculation it was required at step 1
-	std::cout << "Origin at "<<ori->x<<","<<ori->y<<std::endl;
+	std::cout << "Origin at id "<<ori->id<<"==>"<<ori->x<<","<<ori->y<<std::endl;
 	//for i=1 checkingat Visible(wi) 2nd line
 	int index=1;
 	//Keep w_i -1 th Point
@@ -125,18 +126,20 @@ vector<Line*> VisibilityGraphController::generateVisibleEdge(angleContainer angl
 		  if(index!=1){
 			  w_i_1=(--k)->second;
 			  ++k;
-			  std::cout << "Sweeps at Point w_i: "<<w_i->id<<" - "<<w_i->x<<","<<w_i->y<<" w_i-1 "<<w_i_1->id<<std::endl;
+			 // std::cout << "Sweeps at Point w_i: "<<w_i->id<<" - "<<w_i->x<<","<<w_i->y<<" w_i-1 "<<w_i_1->id<<std::endl;
+			  std::cout << "Sweeps at "<<w_i->id<<std::endl;
 		  }
 		  else
 			  std::cout << "Sweeps starts at Point w_i: "<<w_i->id<<std::endl;
 		  index++;
-		  sweepLine=new Line(ori->x,ori->y,w_i->x,w_i->y);
+		//  sweepLine=new Line(ori->x,ori->y,w_i->x,w_i->y);
+		  sweepLine=new Line(ori,w_i);
 		  if(isVisible(w_i,ori,sweepLine,w_i_1,index,edges))
 		  {
 			  w_i->visited=true;
 			  ori->addVisible(w_i);
 			  visibleEdges.push_back(new Line(ori->x,ori->y,w_i->x,w_i->y));
-			  std::cout<<"Visible Edges "<<ori->id<<"->"<<w_i->id<<std::endl;
+			  //std::cout<<"Visible Edges "<<ori->id<<"->"<<w_i->id<<std::endl;
 		  }
 			  //Check for clockwise side edges
 			  //Each points has two edge associated and thats why two new points
@@ -151,11 +154,13 @@ vector<Line*> VisibilityGraphController::generateVisibleEdge(angleContainer angl
 			  if(isRotationClockwise(ori,w_i,c)){
 				  //CONFUSED ABOUT DIST
 				  std::cout<<"Line "<<ln->id<<" and Point "<<c->x<<","<<c->y<< " is at clockwise side of Point "<<ori->id<<","<<w_i->id<<std::endl;
-				   edges.insert(double_line(dist,ln));
+				  edges.insert(double_line(dist,ln));
 
 			  }else{
 				  std::cout<<"Line "<<ln->id<<" and Point "<<c->x<<","<<c->y<<" is at anti-clockwise side of "<<ori->id<<","<<w_i->id<<std::endl;
 				  edges.erase(dist);
+				  std::cout<<"Erasing at 1 Dist : "<<dist<<std::endl;
+				  printEdgeList(edges);
 			  }
 
 			  c=findPointById(vg->nodes,otherEnds[1]);
@@ -168,15 +173,12 @@ vector<Line*> VisibilityGraphController::generateVisibleEdge(angleContainer angl
 			  }
 			  else{
 				  std::cout<<"Line "<<ln->id<<" and Point "<<c->x<<","<<c->y<<" is at anti-clockwise side of "<<ori->id<<","<<w_i->id<<std::endl;
-			  	edges.erase(dist);
+				  edges.erase(dist);
+				  std::cout<<"Erasing at 2 Dist : "<<dist<<std::endl;
+				  printEdgeList(edges);
 			  }
 
-			/*  std::cout << "Edge List :" << std::endl;
-			  key_index_edge& kin = edges.get<key_tag>();
-			  for( key_index_edge::iterator k = kin.begin(); k != kin.end(); ++k ){
-			  	 	 k->second->print();
-			  }
-			  */
+			  std::cout<<"After Edge Operation "<<std::endl;
 			  printEdgeList(edges);
 
 	  }
@@ -184,11 +186,13 @@ vector<Line*> VisibilityGraphController::generateVisibleEdge(angleContainer angl
 		return visibleEdges;
 }
 
+
 void printEdgeList(edgeContainer edges){
 	std::cout << "Edge List :" << std::endl;
 	key_index_edge& kin = edges.get<key_tag>();
 	for( key_index_edge::iterator k = kin.begin(); k != kin.end(); ++k ){
 		k->second->print();
+		std::cout << "Dist :" <<k->first<< std::endl;
 	}
 }
 Point* findPointById( vector<Point*> points,int itemToFind){
@@ -226,22 +230,40 @@ Line* searchLineContainingPoint(Point* pt,int *lineIds,vector<Line*> lines){
 bool VisibilityGraphController::isVisible(Point* w_i,Point* ori,Line* sweepLine,Point* w_i_1,int i,edgeContainer edges){
 	//If sweepline insectes interio of the polygon of which w_i is a vertex
 	tLinestring line=createLineString(sweepLine);
+	std::cout <<"Sweep Line " << " ==> " << sweepLine->a->id<<","<<sweepLine->b->id << std::endl;
 	tPolygon poly=getObsCoveringPoint(w_i,obstacleList)->poly;
-	if(doesLineAndPolygonIntersects(line,poly))
+	if(doesLineAndPolygonIntersects(line,poly)){
+		 std::cout <<"At Line 1" << std::endl;
 		return false;
-	if(i==1 || checkCoLinear(sweepLine->a,w_i_1,sweepLine->b)){
+	}
+	if(i==1 || !checkCoLinear(sweepLine->a,w_i_1,sweepLine->b)){
+		 std::cout <<"At Line 2" << std::endl;
 		 key_index_edge& kindex = edges.get<key_tag>();
 		 Line* e = kindex.begin()->second;
-	     // std::cout <<"First Edge " << " ==> " << e->id << std::endl;
+	     std::cout <<"First Line in Edge List " << " ==> " << e->id << std::endl;
 		 if(e!=NULL){
 			 tLinestring eLine=createLineString(e);
 			 bool b = boost::geometry::intersects(line,eLine);
+
 			 if(b){
+				 //Two line just touched not intersects
+				 if(!doesTwoLineTouches(line,eLine,w_i)){
+					 std::cout <<"At Line 4" << std::endl;
+					 return false;
+				 }
+			 }
+			 else{
+				 std::cout <<"At Line 4.5" << std::endl;
 				 return true;
 			 }
 		 }
+		 else{
+			 return true;
+			 std::cout <<"At Line 5" << std::endl;
+		 }
 	}
-	else
+	else{
+		 std::cout <<"At Line 6" << std::endl;
 		if(!ori->isVisible(w_i_1)){
 			return false;
 		}
@@ -262,7 +284,7 @@ bool VisibilityGraphController::isVisible(Point* w_i,Point* ori,Line* sweepLine,
 			else
 				return true;
 		}
-
+	}
 	return true;
 }
 Obstacle* getObsCoveringPoint(Point* w_i,vector<Obstacle*> obsList){
@@ -273,11 +295,30 @@ Obstacle* getObsCoveringPoint(Point* w_i,vector<Obstacle*> obsList){
 	}
 }
 
+bool doesTwoLineTouches(tLinestring ls1,tLinestring ls2,Point* w_i){
+	std::deque<tPoint> output;
+	int i=0;
+	bool touches=false;
+	boost::geometry::intersection(ls1, ls2, output);
+	BOOST_FOREACH(tPoint const& p, output)
+	{
+			double x1=get<0>(p);
+			double y1=get<1>(p);
+			//2 Line Touches at w_i not internally Intersects
+			if(x1==w_i->x && y1==w_i->y){
+				touches=true;
+			}
+	    //    std::cout <<  "Intersects at : " << x1<<","<<y1<<" and Point at: "<<w_i->x<<","<<w_i->y << std::endl;
+    }
+	return touches;
+}
+
 bool doesLineAndPolygonIntersects(tLinestring ls,tPolygon p){
 	std::vector<turn_info> turns;
 	bg::detail::get_turns::no_interrupt_policy policy;
 	bg::get_turns<false, false, bg::detail::overlay::assign_null_policy>(ls, p, turns, policy);
-    if(turns.size()>0){
+    if(turns.size()>1){
+    	std::cout <<"Intersects True " << turns.size() << std::endl;
 	   	return true;
     }
     return false;

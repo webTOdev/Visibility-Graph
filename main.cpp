@@ -16,6 +16,7 @@
 #include "graphutility.h"
 
 void drawObs(Obstacle* obs,Point* ori);
+void drawVisEdges(vector<Line*> visEdges);
 int main() {
 
 	vector<Obstacle*> obsList;
@@ -36,6 +37,7 @@ int main() {
 	Point* ori=new Point(10,100);
 	VisibilityGraphController* vg = new VisibilityGraphController(visGraph);
 	vector<Line*> visEdges=vg->visibleVertices(ori);
+	drawVisEdges(visEdges);
 
 	drawLine(10,100,1000,100);
 	for(int i=0;i<obsList.size();i++){
@@ -78,7 +80,7 @@ void drawObs(Obstacle* o,Point* ori){
 		    drawCircle((*it)->x,(*it)->y);
 		    drawText((*it)->x,(*it)->y,(*it)->id,RED);
 		    //Draw Lines for angle sorting
-		  //  drawLine((*it)->x,(*it)->y,ori->x,ori->y);
+		    //drawLine((*it)->x,(*it)->y,ori->x,ori->y);
 		}
 
 		 double *iterator = ps;
