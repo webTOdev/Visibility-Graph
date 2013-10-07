@@ -62,8 +62,8 @@ public:
 	VisibilityGraphController(VisibilityGraph* vg);
 	vector<Line*> visibleVertices(Point* ori);
 	virtual ~VisibilityGraphController();
-	bool isVisible(Point* w_i,Point* ori,Line* sweepLine,Point* w_i_1,int i,edgeContainer edges);
-	vector<Line*> generateVisibleEdge(angleContainer angles,vector<Obstacle*> obstacleList,Point* ori,edgeContainer edges,VisibilityGraph* vg);
+	bool isVisible(Point* w_i,Point* ori,Line* sweepLine,Point* w_i_1,int i,edgeContainer edges,vector<Line*> bstEdgeList);
+	vector<Line*> generateVisibleEdge(angleContainer angles,vector<Obstacle*> obstacleList,Point* ori,edgeContainer edges,VisibilityGraph* vg,vector<Line*> bstEdgeList);
 	void pointsAndAssociatedEdge(vector<Obstacle*> obsList);
 };
 
