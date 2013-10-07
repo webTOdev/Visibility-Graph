@@ -84,5 +84,17 @@ bool checkCoLinear(Point* a,Point* b,Point* c){
 
 }
 
+double angleBetweenThreePoint(double x1,double y1,double x2,double y2,double x3,double y3){
+	float dx21 = x2-x1;
+	float dx31 = x3-x1;
+	float dy21 = y2-y1;
+	float dy31 = y3-y1;
+	float m12 = sqrt( dx21*dx21 + dy21*dy21 );
+	float m13 = sqrt( dx31*dx31 + dy31*dy31 );
+	float theta = acos( (dx21*dx31 + dy21*dy31) / (m12 * m13) );
+
+	return theta;
+}
+
 
 

@@ -62,9 +62,9 @@ void drawEdge(Line* a){
 	img.draw_line(a->a->x,a->a->y,a->b->x,a->b->y,BLUE);
 
 	disp.display(img);
-
-
 }
+
+
 
 
 #endif /* DRAWING_H_ */

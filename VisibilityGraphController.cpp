@@ -21,6 +21,7 @@ bool doesLineAndPolygonIntersects(tLinestring ls,tPolygon p);
 void printEdgeList(edgeContainer edges);
 bool doesTwoLineTouches(tLinestring ls1,tLinestring ls2,Point* w_i);
 edgeContainer eraseOneEdgeFromEdgeList(edgeContainer edges,Line* ln);
+edgeContainer insertOneEdgeInEdgeList(edgeContainer edges,Line* ln,double dist,Point* ori,Point* w_i,Point* c);
 
 VisibilityGraphController::VisibilityGraphController() {
 	// TODO Auto-generated constructor stub
@@ -140,7 +141,7 @@ vector<Line*> VisibilityGraphController::generateVisibleEdge(angleContainer angl
 			  w_i->visited=true;
 			  ori->addVisible(w_i);
 			  visibleEdges.push_back(new Line(ori->x,ori->y,w_i->x,w_i->y));
-			  //std::cout<<"Visible Edges "<<ori->id<<"->"<<w_i->id<<std::endl;
+			  std::cout<<"Visible Edges "<<ori->id<<"->"<<w_i->id<<std::endl;
 		  }
 			  //Check for clockwise side edges
 			  //Each points has two edge associated and thats why two new points
@@ -154,9 +155,12 @@ vector<Line*> VisibilityGraphController::generateVisibleEdge(angleContainer angl
 			  Line* ln = searchLineContainingPoint(c,es,vg->obsSides);
 			  if(isRotationClockwise(ori,w_i,c)){
 				  //CONFUSED ABOUT DIST currently storing as origin to obsSide distance
+				  tLinestring lineS=createLineString(ln);
 				  std::cout<<"Line "<<ln->id<<" and Point "<<c->x<<","<<c->y<< " is at clockwise side of Point "<<ori->id<<","<<w_i->id<<std::endl;
-				  dist=bg::distance(boost::make_tuple(ori->x, ori->y),createLineString(ln));
-				  edges.insert(double_line(dist,ln));
+				  dist=bg::distance(boost::make_tuple(ori->x, ori->y),lineS);
+				  std::cout<<"Distance : "<<ln->id<<" and "<<ori->id<<" : "<<dist<<std::endl;
+				  edges = insertOneEdgeInEdgeList(edges,ln,dist,ori,w_i,c);
+				//  edges.insert(double_line(dist,ln));
 
 			  }else{
 				  std::cout<<"Line "<<ln->id<<" and Point "<<c->x<<","<<c->y<<" is at anti-clockwise side of "<<ori->id<<","<<w_i->id<<std::endl;
@@ -168,17 +172,18 @@ vector<Line*> VisibilityGraphController::generateVisibleEdge(angleContainer angl
 			  ln = searchLineContainingPoint(c,es,vg->obsSides);
 			  if(isRotationClockwise(ori,w_i,c)){
 				  //CONFUSED ABOUT DIST
-				  dist=bg::distance(boost::make_tuple(ori->x, ori->y),createLineString(ln));
+				  tLinestring lineS=createLineString(ln);
+				  dist=bg::distance(boost::make_tuple(ori->x, ori->y),lineS);
 				  std::cout<<"Line "<<ln->id<<" and Point "<<c->x<<","<<c->y<<" is at clockwise side of "<<ori->id<<","<<w_i->id<<std::endl;
-				  edges.insert(double_line(dist,ln));
+				  std::cout<<"Distance : "<<ln->id<<" and "<<ori->id<<" : "<<dist<<std::endl;
+				  edges=insertOneEdgeInEdgeList(edges,ln,dist,ori,w_i,c);
+				  //edges.insert(double_line(dist,ln));
+
 			  }
 			  else{
 				  std::cout<<"Line "<<ln->id<<" and Point "<<c->x<<","<<c->y<<" is at anti-clockwise side of "<<ori->id<<","<<w_i->id<<std::endl;
 				  edges =eraseOneEdgeFromEdgeList(edges,ln);
 			  }
-
-			  std::cout<<"After Edge Operation "<<std::endl;
-			  printEdgeList(edges);
 
 	  }
 
@@ -192,8 +197,48 @@ edgeContainer eraseOneEdgeFromEdgeList(edgeContainer edges,Line* ln){
 			std::cout << "Erasing Line :" <<k->second->id<< std::endl;
 			std::cout << "Dist :" <<k->first<< std::endl;
 			kin.erase(k++);
+			break;
 		}
 	}
+	return edges;
+}
+
+edgeContainer insertOneEdgeInEdgeList(edgeContainer edges,Line* ln,double dist,Point* ori,Point* w_i,Point* c){
+	key_index_edge& kin = edges.get<key_tag>();
+	bool found=false;
+	for( key_index_edge::iterator k = kin.begin(); k != kin.end(); ++k ){
+		//Don't add same edge twice
+		if(k->second->id == ln->id)
+			continue;
+		if(k->first == dist){
+			found=true;
+			Line* oldLine=k->second;
+			std::cout << "Found Line :" <<oldLine->id<< " in same distance "<<std::endl;
+
+			Point* c2;
+			if(oldLine->a->id == w_i->id){
+				c2=oldLine->b;
+			}
+			else
+			c2=oldLine->a;
+
+			double angleNew=angleBetweenThreePoint(ori->x,ori->y,w_i->x,w_i->y,c->x,c->y);
+			std::cout << "Angle between :" <<ln->id<<" and sweepline "<<angleNew<< std::endl;
+			double anglePre=angleBetweenThreePoint(ori->x,ori->y,w_i->x,w_i->y,c2->x,c2->y);
+			std::cout << "Angle between :" <<oldLine->id<<" and sweepline "<<anglePre<< std::endl;
+			//As the two distance is similar we will insert the edge according to the angle between sweepline and edge
+			if(angleNew>anglePre){
+				edges.insert(double_line(dist-.00001,ln));
+			}
+			else
+				edges.insert(double_line(dist+.00001,ln));
+
+			//kin.erase(k++);
+		}
+	}
+
+	if(!found)
+		edges.insert(double_line(dist,ln));
 	return edges;
 }
 

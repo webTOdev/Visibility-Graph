@@ -32,14 +32,22 @@ int main() {
 	obs=createObstacle("polygon((400 320,450 320,450 450,480 470,480 320,520 320,500 520,400 530,400 320))");
 	obsList.push_back(obs);
 
+
+	/*Obstacle* obs=createObstacle("polygon((200 20,250 20,250 200,200 200,200 20))");
+	obsList.push_back(obs);
+
+	obs=createObstacle("polygon((100 150,150 150,150 50,100 50,100 150))");
+	obsList.push_back(obs);
+	*/
+
 	VisibilityGraph* visGraph = new VisibilityGraph(obsList);
 	visGraph->print();
-	Point* ori=new Point(10,100);
+	Point* ori=new Point(40,60);
 	VisibilityGraphController* vg = new VisibilityGraphController(visGraph);
 	vector<Line*> visEdges=vg->visibleVertices(ori);
 	drawVisEdges(visEdges);
 
-	drawLine(10,100,1000,100);
+	drawLine(ori->x,ori->y,ori->x+1000,ori->y);
 	for(int i=0;i<obsList.size();i++){
 		//obsList[i]->print();
 		drawObs(obsList[i],ori);
