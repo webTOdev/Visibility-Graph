@@ -19,5 +19,6 @@ bool isRotationClockwise(Point* a,Point* b,Point* c);
 //Point* findPointById(vector<Point*> points,int itemToFind);
 bool checkCoLinear(Point* a,Point* b,Point* c);
 double angleBetweenThreePoint(double x1,double y1,double x2,double y2,double x3,double y3);
+bool isClockwise(Point* sweepPoint,Point* b);
 
 #endif /* GRAPHUTILITY_H_ */

@@ -54,11 +54,29 @@ bool isRotationClockwise(Point* a,Point* b,Point* c){
 
 	double s1=(x2-x1)*(y2+y1);
 	double s2=(x3-x2)*(y3+y2);
-	double s3=(x1-x3)*(y1+y1);
+	double s3=(x1-x3)*(y1+y3);
 
 	double sum=s1+s2+s3;
 	bool clockwise=false;
 	if(sum>0)
+		clockwise=true;
+	return clockwise;
+
+}
+
+bool isClockwise(Point* sweepPoint,Point* b){
+	//Sum over the edges, (x2-x1)(y2+y1). If the result is positive the curve is clockwise
+	double sweepPointTheta = sweepPoint->theta;
+	double angle=b->theta;
+
+	std::cout<<"Sweep theta "<<sweepPointTheta<<" and Point "<<b->id<<" theta "<<angle<<std::endl;
+	bool clockwise=false;
+	/*
+	 * if at clockwise then the theta with horizontal X axis will be greater
+	 *
+	 *
+	 */
+	if(angle>sweepPointTheta)
 		clockwise=true;
 	return clockwise;
 

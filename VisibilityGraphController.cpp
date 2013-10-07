@@ -153,7 +153,8 @@ vector<Line*> VisibilityGraphController::generateVisibleEdge(angleContainer angl
 			  Point* c=findPointById(vg->nodes,otherEnds[0]);
 			 // double dist=bg::distance(boost::make_tuple(c->x, c->y),w_i->p);
 			  Line* ln = searchLineContainingPoint(c,es,vg->obsSides);
-			  if(isRotationClockwise(ori,w_i,c)){
+		//	  if(isRotationClockwise(ori,w_i,c)){
+			  if(isClockwise(w_i,c)){
 				  //CONFUSED ABOUT DIST currently storing as origin to obsSide distance
 				  tLinestring lineS=createLineString(ln);
 				  std::cout<<"Line "<<ln->id<<" and Point "<<c->x<<","<<c->y<< " is at clockwise side of Point "<<ori->id<<","<<w_i->id<<std::endl;
@@ -170,7 +171,8 @@ vector<Line*> VisibilityGraphController::generateVisibleEdge(angleContainer angl
 			  c=findPointById(vg->nodes,otherEnds[1]);
 			//  dist=bg::distance(boost::make_tuple(c->x, c->y),w_i->p);
 			  ln = searchLineContainingPoint(c,es,vg->obsSides);
-			  if(isRotationClockwise(ori,w_i,c)){
+			 // if(isRotationClockwise(ori,w_i,c)){
+			  if(isClockwise(w_i,c)){
 				  //CONFUSED ABOUT DIST
 				  tLinestring lineS=createLineString(ln);
 				  dist=bg::distance(boost::make_tuple(ori->x, ori->y),lineS);
@@ -228,10 +230,10 @@ edgeContainer insertOneEdgeInEdgeList(edgeContainer edges,Line* ln,double dist,P
 			std::cout << "Angle between :" <<oldLine->id<<" and sweepline "<<anglePre<< std::endl;
 			//As the two distance is similar we will insert the edge according to the angle between sweepline and edge
 			if(angleNew>anglePre){
-				edges.insert(double_line(dist-.00001,ln));
+				edges.insert(double_line(dist+.00001,ln));
 			}
 			else
-				edges.insert(double_line(dist+.00001,ln));
+				edges.insert(double_line(dist-.00001,ln));
 
 			//kin.erase(k++);
 		}
@@ -293,10 +295,12 @@ bool VisibilityGraphController::isVisible(Point* w_i,Point* ori,Line* sweepLine,
 	}
 	if(i==1 || !checkCoLinear(sweepLine->a,w_i_1,sweepLine->b)){
 		 std::cout <<"At Line 2" << std::endl;
+		// if(edges.empty()
 		 key_index_edge& kindex = edges.get<key_tag>();
 		 Line* e = kindex.begin()->second;
-	     std::cout <<"First Line in Edge List " << " ==> " << e->id << std::endl;
+
 		 if(e!=NULL){
+			 std::cout <<"First Line in Edge List " << " ==> " << e->id << std::endl;
 			 tLinestring eLine=createLineString(e);
 			 bool b = boost::geometry::intersects(line,eLine);
 
@@ -308,7 +312,7 @@ bool VisibilityGraphController::isVisible(Point* w_i,Point* ori,Line* sweepLine,
 				 }
 			 }
 			 else{
-				 std::cout <<"At Line 4.5" << std::endl;
+				 std::cout <<"At Line 4.5 and edge list not empty" << std::endl;
 				 return true;
 			 }
 		 }

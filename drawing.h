@@ -19,6 +19,9 @@ using namespace std;
 CImg<unsigned char> img(screen_size,screen_size,1,3,20);
 CImgDisplay disp(img, "Obstacle Shortest Path Using Visibility Graph");      // Display the modified image on the screen
 
+unsigned int flip_y( unsigned int y, unsigned int height ) {
+    return height - y;
+}
 void drawPolygon(CImg<double> points){
 
 	img.draw_polygon(points,GREY,0.4);

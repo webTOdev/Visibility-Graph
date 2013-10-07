@@ -42,7 +42,7 @@ int main() {
 
 	VisibilityGraph* visGraph = new VisibilityGraph(obsList);
 	visGraph->print();
-	Point* ori=new Point(40,60);
+	Point* ori=new Point(140,60);
 	VisibilityGraphController* vg = new VisibilityGraphController(visGraph);
 	vector<Line*> visEdges=vg->visibleVertices(ori);
 	drawVisEdges(visEdges);
