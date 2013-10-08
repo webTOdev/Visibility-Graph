@@ -42,7 +42,13 @@ int main() {
 
 	VisibilityGraph* visGraph = new VisibilityGraph(obsList);
 	visGraph->print();
-	Point* ori=new Point(140,60);
+	//Point* clockwise=true;ori=new Point(540,520);
+	//Point* ori=new Point(40,20);clockwise=true;
+	//Point* ori=new Point(440,20);
+	//Point* ori=new Point(440,120);
+	//Point* ori=new Point(140,60);//Problematic input
+	//Point* ori=new Point(140,160);
+	Point* ori=new Point(10,5);
 	VisibilityGraphController* vg = new VisibilityGraphController(visGraph);
 	vector<Line*> visEdges=vg->visibleVertices(ori);
 	drawVisEdges(visEdges);
@@ -88,7 +94,7 @@ void drawObs(Obstacle* o,Point* ori){
 		    drawCircle((*it)->x,(*it)->y);
 		    drawText((*it)->x,(*it)->y,(*it)->id,RED);
 		    //Draw Lines for angle sorting
-		    //drawLine((*it)->x,(*it)->y,ori->x,ori->y);
+		   // drawLine((*it)->x,(*it)->y,ori->x,ori->y);
 		}
 
 		 double *iterator = ps;

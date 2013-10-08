@@ -76,11 +76,18 @@ bool isClockwise(Point* sweepPoint,Point* b){
 	 * if sweepPoint is below b then just opposite that is theta wil X axis is smaller
 	 *
 	 */
-	if(sweepPoint->y < b->y){
 
-		if(angle>sweepPointTheta)
+	/*	if(angle>sweepPointTheta)
 			clockwise=true;
-	}
+			*/
+
+		if (angle < sweepPointTheta && !(angle < 0 && sweepPointTheta > 0)) {
+		    // is going counter clockwise
+			clockwise=false;
+		} else {
+		    // is going clockwise
+			clockwise=true;
+		}
 	return clockwise;
 
 }
