@@ -21,19 +21,7 @@ Line::Line(double x1, double y1, double x2, double y2)
 		b = new Point(x2, y2);
 		line = boost::assign::tuple_list_of(x1, y1)(x2, y2);
 	}
-	/*else
-	if(x1==x2){
-		x2=x2+.02;
-		a = new Point(x1, y1);
-		b = new Point(x2, y2);
-	}
-	else
-	if(y1==y2){
-		y2=y2+.02;
-		a = new Point(x1, y1);
-		b = new Point(x2, y2);
-	}
-	*/
+
 	else
 	{
 		b = new Point(x1, y1);
@@ -45,11 +33,6 @@ Line::Line(double x1, double y1, double x2, double y2)
 	// Change ID
 	static int id_counter = 0;
 	id = id_counter++;
-	
-	// Keep track of its visited history
-	visited = false;
-	visitedStartPoint = false;
-	
 	//	cout << "LINE" << endl;	
 	updateCalcs();
 
@@ -70,11 +53,7 @@ Line::Line(Point* p1,Point* p2){
 		static int id_counter = 0;
 		id = id_counter++;
 
-		// Keep track of its visited history
-		visited = false;
-		visitedStartPoint = false;
-
-		//	cout << "LINE" << endl;
+	//	cout << "LINE" << endl;
 		updateCalcs();
 
 		//	cout << "LINE" << endl;
