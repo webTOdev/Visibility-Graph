@@ -17,7 +17,7 @@ edgeContainer findIntersectionWithEdge(angleContainer angles,vector<Obstacle*> o
 Point* findPointById( vector<Point*> points,int itemToFind);
 Line* searchLineContainingPoint(Point* pt,int *lineIds,vector<Line*> lines);
 Obstacle* getObsCoveringPoint(Point* w_i,vector<Obstacle*> obsList);
-bool doesLineAndPolygonIntersects(tLinestring ls,tPolygon p);
+bool doesLineAndPolygonIntersects(tLinestring ls,tPolygon p,Line* sweepLine);
 void printEdgeList(edgeContainer edges);
 bool doesTwoLineTouches(tLinestring ls1,tLinestring ls2,Point* w_i);
 edgeContainer eraseOneEdgeFromEdgeList(edgeContainer edges,Line* ln);
@@ -41,11 +41,27 @@ VisibilityGraphController::~VisibilityGraphController() {
 	// TODO Auto-generated destructor stub
 }
 
+vector<Line*> VisibilityGraphController::constructVisGraph(){
+
+	vector<Line*> temp;
+	vector<Line*> visEdges=visGraph->edges;
+	visEdges.clear();
+//	for(int i=0;i<visGraph->nodes.size();i++){
+		Point* p=visGraph->nodes[0];
+		temp.clear();
+		temp = visibleVertices(p);
+		visEdges.insert(visEdges.end(),temp.begin(),temp.end());
+//	}
+	return visEdges;
+
+}
+
 vector<Line*> VisibilityGraphController::visibleVertices(Point* ori){
 	tLinestring centerLine = createHorizontalLine(ori); //SweepLine initialize to horizontal
 	tPoint pt=ori->p; //The point around which the SweepLine rotates
 	angleContainer angles;
 
+	std::cout << "Origin at id "<<ori->id<<"==>"<<ori->x<<","<<ori->y<<std::endl;
 	//Iterate over each of the obstacles and sort all the points
 	for(int m=0;m<obstacleList.size();m++){
 		Obstacle* o=obstacleList[m];
@@ -115,8 +131,6 @@ vector<Line*> VisibilityGraphController::generateVisibleEdge(angleContainer angl
 	vector<Line*> visibleEdges;
 	Line* sweepLine;
 
-	double dist = 12345678; //Very large value to avoid distance calculation it was required at step 1
-	std::cout << "Origin at id "<<ori->id<<"==>"<<ori->x<<","<<ori->y<<std::endl;
 	//for i=1 checkingat Visible(wi) 2nd line
 	int index=1;
 	//Keep w_i -1 th Point
@@ -286,7 +300,7 @@ bool VisibilityGraphController::isVisible(Point* w_i,Point* ori,Line* sweepLine,
 	tLinestring line=createLineString(sweepLine);
 	std::cout <<"Sweep Line " << " ==> " << sweepLine->a->id<<","<<sweepLine->b->id << std::endl;
 	tPolygon poly=getObsCoveringPoint(w_i,obstacleList)->poly;
-	if(doesLineAndPolygonIntersects(line,poly)){
+	if(doesLineAndPolygonIntersects(line,poly,sweepLine)){
 		 std::cout <<"At Line 1" << std::endl;
 		return false;
 	}
@@ -370,10 +384,11 @@ bool doesTwoLineTouches(tLinestring ls1,tLinestring ls2,Point* w_i){
 	return touches;
 }
 
-bool doesLineAndPolygonIntersects(tLinestring ls,tPolygon p){
+bool doesLineAndPolygonIntersects(tLinestring ls,tPolygon p,Line* sweepLine){
 	std::vector<turn_info> turns;
 	bg::detail::get_turns::no_interrupt_policy policy;
 	bg::get_turns<false, false, bg::detail::overlay::assign_null_policy>(ls, p, turns, policy);
+
     if(turns.size()>1){
     	std::cout <<"Intersects True " << turns.size() << std::endl;
 	   	return true;

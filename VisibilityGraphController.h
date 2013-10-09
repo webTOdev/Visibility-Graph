@@ -65,6 +65,7 @@ public:
 	bool isVisible(Point* w_i,Point* ori,Line* sweepLine,Point* w_i_1,int i,edgeContainer edges);
 	vector<Line*> generateVisibleEdge(angleContainer angles,vector<Obstacle*> obstacleList,Point* ori,edgeContainer edges,VisibilityGraph* vg);
 	edgeContainer updateEdgeList(edgeContainer edges,int* otherEnds,int* es,Point* ori,Point* w_i);
+	vector<Line*> constructVisGraph();
 };
 
 #endif /* VISIBILITYGRAPHCONTROLLER_H_ */
