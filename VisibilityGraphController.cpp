@@ -132,7 +132,7 @@ vector<Line*> VisibilityGraphController::generateVisibleEdge(angleContainer angl
 	  for( key_index_t::iterator k = kindex.begin(); k != kindex.end(); ++k ){
 	       // std::cout << k->first << " ==> " << k->second->id << std::endl;
 		  printEdgeList(edges);
-		  printVectorEdgeList(bstEdgeList);
+	//	  printVectorEdgeList(bstEdgeList);
 		  Point* w_i=k->second;
 		  if(index!=1){
 			  w_i_1=(--k)->second;
@@ -163,7 +163,7 @@ vector<Line*> VisibilityGraphController::generateVisibleEdge(angleContainer angl
 			 // double dist=bg::distance(boost::make_tuple(c->x, c->y),w_i->p);
 			  Line* ln = searchLineContainingPoint(c,es,vg->obsSides);
 		//	  if(isRotationClockwise(ori,w_i,c)){
-			  if(isClockwise(w_i,c)){
+			  if(isLeft(ori,w_i,c)){
 				  //CONFUSED ABOUT DIST currently storing as origin to obsSide distance
 				  tLinestring lineS=createLineString(ln);
 				  std::cout<<"Line "<<ln->id<<" and Point "<<c->x<<","<<c->y<< " is at clockwise side of Point "<<ori->id<<","<<w_i->id<<std::endl;
@@ -175,14 +175,14 @@ vector<Line*> VisibilityGraphController::generateVisibleEdge(angleContainer angl
 			  }else{
 				  std::cout<<"Line "<<ln->id<<" and Point "<<c->x<<","<<c->y<<" is at anti-clockwise side of "<<ori->id<<","<<w_i->id<<std::endl;
 				  edges = eraseOneEdgeFromEdgeList(edges,ln);
-				  bstEdgeList=eraseOneEdgeFromVectorEdgeList(bstEdgeList,ln);
+				 // bstEdgeList=eraseOneEdgeFromVectorEdgeList(bstEdgeList,ln);
 			  }
 
 			  c=findPointById(vg->nodes,otherEnds[1]);
 			//  dist=bg::distance(boost::make_tuple(c->x, c->y),w_i->p);
 			  ln = searchLineContainingPoint(c,es,vg->obsSides);
 			 // if(isRotationClockwise(ori,w_i,c)){
-			  if(isClockwise(w_i,c)){
+			  if(isLeft(ori,w_i,c)){
 				  //CONFUSED ABOUT DIST
 				  tLinestring lineS=createLineString(ln);
 				  dist=bg::distance(boost::make_tuple(ori->x, ori->y),lineS);
@@ -195,7 +195,7 @@ vector<Line*> VisibilityGraphController::generateVisibleEdge(angleContainer angl
 			  else{
 				  std::cout<<"Line "<<ln->id<<" and Point "<<c->x<<","<<c->y<<" is at anti-clockwise side of "<<ori->id<<","<<w_i->id<<std::endl;
 				  edges =eraseOneEdgeFromEdgeList(edges,ln);
-				  bstEdgeList=eraseOneEdgeFromVectorEdgeList(bstEdgeList,ln);
+				//  bstEdgeList=eraseOneEdgeFromVectorEdgeList(bstEdgeList,ln);
 			  }
 
 	  }
