@@ -43,10 +43,10 @@ int main() {
 	VisibilityGraph* visGraph = new VisibilityGraph(obsList);
 	visGraph->print();
 	//Point* clockwise=true;ori=new Point(540,520);
-	//Point* ori=new Point(40,20);clockwise=true;
+	Point* ori=new Point(40,20);
 	//Point* ori=new Point(440,20);
 	//Point* ori=new Point(440,120);
-	Point* ori=new Point(140,60);//Problematic input
+	//Point* ori=new Point(140,60);//Problematic input
 	//Point* ori=new Point(140,160);
 	//Point* ori=new Point(10,5);
 	VisibilityGraphController* vg = new VisibilityGraphController(visGraph);
