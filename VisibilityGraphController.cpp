@@ -46,12 +46,12 @@ vector<Line*> VisibilityGraphController::constructVisGraph(){
 	vector<Line*> temp;
 	vector<Line*> visEdges=visGraph->edges;
 	visEdges.clear();
-	for(int i=0;i<visGraph->nodes.size();i++){
-		Point* p=visGraph->nodes[i];
+//	for(int i=0;i<visGraph->nodes.size();i++){
+		Point* p=visGraph->nodes[16];
 		temp.clear();
 		temp = visibleVertices(p);
 		visEdges.insert(visEdges.end(),temp.begin(),temp.end());
-	}
+	//}
 	return visEdges;
 
 }
