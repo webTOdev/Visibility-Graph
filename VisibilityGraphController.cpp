@@ -22,8 +22,6 @@ void printEdgeList(edgeContainer edges);
 bool doesTwoLineTouches(tLinestring ls1,tLinestring ls2,Point* w_i);
 edgeContainer eraseOneEdgeFromEdgeList(edgeContainer edges,Line* ln);
 edgeContainer insertOneEdgeInEdgeList(edgeContainer edges,Line* ln,double dist,Point* ori,Point* w_i,Point* c);
-deque<Line*> eraseOneEdgeFromVectorEdgeList(deque<Line*> bstEdgeList,Line* ln);
-void printVectorEdgeList(deque<Line*> bstEdgeList);
 
 
 VisibilityGraphController::VisibilityGraphController() {
@@ -72,14 +70,9 @@ vector<Line*> VisibilityGraphController::visibleVertices(Point* ori){
 	     std::cout << "Found 2.59543 ==> " << found->id << std::endl;
 */
 	     edgeContainer bstEdges;
-	     deque<Line*> bstEdgeList;
 	     bstEdges = findIntersectionWithEdge(angles,obstacleList,centerLine,ori,bstEdges);
 	     //Decided to store edges in vector :(
-	     key_index_edge& kin = bstEdges.get<key_tag>();
-	     	for( key_index_edge::iterator k = kin.begin(); k != kin.end(); ++k ){
-	     		bstEdgeList.push_back(k->second);
-	     	}
-	     vector<Line*> visibleEdges=generateVisibleEdge(angles,obstacleList,ori,bstEdges,visGraph,bstEdgeList);
+	     vector<Line*> visibleEdges=generateVisibleEdge(angles,obstacleList,ori,bstEdges,visGraph);
 
 	return visibleEdges;
 
@@ -116,7 +109,7 @@ edgeContainer findIntersectionWithEdge(angleContainer angles,vector<Obstacle*> o
 
 }
 
-vector<Line*> VisibilityGraphController::generateVisibleEdge(angleContainer angles,vector<Obstacle*> obstacleList,Point* ori,edgeContainer edges,VisibilityGraph* vg,deque<Line*> bstEdgeList){
+vector<Line*> VisibilityGraphController::generateVisibleEdge(angleContainer angles,vector<Obstacle*> obstacleList,Point* ori,edgeContainer edges,VisibilityGraph* vg){
 	vector<Line*> obsEdges;
 	vector<Point*> obsVertices;
 	vector<Line*> visibleEdges;
@@ -146,7 +139,7 @@ vector<Line*> VisibilityGraphController::generateVisibleEdge(angleContainer angl
 		  index++;
 		//  sweepLine=new Line(ori->x,ori->y,w_i->x,w_i->y);
 		  sweepLine=new Line(ori,w_i);
-		  if(isVisible(w_i,ori,sweepLine,w_i_1,index,edges,bstEdgeList))
+		  if(isVisible(w_i,ori,sweepLine,w_i_1,index,edges))
 		  {
 			  w_i->visited=true;
 			  ori->addVisible(w_i);
@@ -247,35 +240,6 @@ edgeContainer VisibilityGraphController::updateEdgeList(edgeContainer edges,int*
 
 	return edges;
 }
-deque<Line*> eraseOneEdgeFromVectorEdgeList(deque<Line*> bstEdgeList,Line* ln){
-
-	for( deque<Line*>::iterator k = bstEdgeList.begin(); k != bstEdgeList.end(); ++k ){
-		Line* edge=*k;
-		if(edge->id == ln->id){
-			std::cout << "Erasing Line :" <<edge->id<< std::endl;
-			if(++k != bstEdgeList.end()){
-				bstEdgeList.erase(--k);
-				k++;
-				break;
-			}
-			else{
-				bstEdgeList.erase(--k);
-				break;
-			}
-			//bstEdgeList.erase(k++);
-		}
-	}
-
-	return bstEdgeList;
-}
-
-void printVectorEdgeList(deque<Line*> bstEdgeList){
-	std::cout << "Vector Edge List :" << std::endl;
-	for( deque<Line*>::iterator k = bstEdgeList.begin(); k != bstEdgeList.end(); ++k ){
-		Line* edge=*k;
-		edge->print();
-	}
-}
 
 void printEdgeList(edgeContainer edges){
 	std::cout << "Edge List :" << std::endl;
@@ -317,7 +281,7 @@ Line* searchLineContainingPoint(Point* pt,int *lineIds,vector<Line*> lines){
 
 
 }
-bool VisibilityGraphController::isVisible(Point* w_i,Point* ori,Line* sweepLine,Point* w_i_1,int i,edgeContainer edges,deque<Line*> bstEdgeList){
+bool VisibilityGraphController::isVisible(Point* w_i,Point* ori,Line* sweepLine,Point* w_i_1,int i,edgeContainer edges){
 	//If sweepline insectes interio of the polygon of which w_i is a vertex
 	tLinestring line=createLineString(sweepLine);
 	std::cout <<"Sweep Line " << " ==> " << sweepLine->a->id<<","<<sweepLine->b->id << std::endl;
@@ -328,16 +292,11 @@ bool VisibilityGraphController::isVisible(Point* w_i,Point* ori,Line* sweepLine,
 	}
 	if(i==1 || !checkCoLinear(sweepLine->a,w_i_1,sweepLine->b)){
 		 std::cout <<"At Line 2" << std::endl;
-		// if(edges.empty()
-	//	 key_index_edge& kindex = edges.get<key_tag>();
-		// Line* e = kindex.begin()->second;
-
 		 //Nusrat
 		 Line* e;
 
 		 if(!edges.empty()){
 			 key_index_edge& kindex = edges.get<key_tag>();
-			 //e=bstEdgeList.front();
 			 e=kindex.begin()->second;
 			 std::cout <<"First Line in Edge List " << " ==> " << e->id << std::endl;
 			 tLinestring eLine=createLineString(e);
@@ -372,18 +331,11 @@ bool VisibilityGraphController::isVisible(Point* w_i,Point* ori,Line* sweepLine,
 			bool b=false;
 			//Nusrat
 			for( key_index_edge::iterator k = kindex1.begin(); k != kindex1.end(); ++k ){
-				       // std::cout << k->first << " ==> " << k->second->id << std::endl;
 				tLinestring edgeLine=createLineString(k->second);
 				b = boost::geometry::intersects(w_1_to_w,edgeLine);
 				if(b)
 				{break;}
 			}
-			/*for( deque<Line*>::iterator k = bstEdgeList.begin(); k != bstEdgeList.end(); ++k ){
-					tLinestring edgeLine=createLineString(*k);
-					b = boost::geometry::intersects(w_1_to_w,edgeLine);
-					if(b)
-					{break;}
-			}*/
 			if(b)
 				return false;
 			else
@@ -443,9 +395,6 @@ tLinestring createLineString(Line* line){
 	 return edge;
 }
 
-void VisibilityGraphController::pointsAndAssociatedEdge(vector<Obstacle*> obsList){
-	for(int i=0;i<obsList.size();obsList){}
-}
 
 
 
