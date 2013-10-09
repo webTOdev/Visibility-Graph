@@ -11,7 +11,7 @@
 #include "obstacles.h"
 #include "point.h"
 #include <vector>
-#include <set>
+#include <deque>
 #include "boostHelper.h"
 #include "graphutility.h"
 #include "VisibilityGraph.h"
@@ -62,9 +62,10 @@ public:
 	VisibilityGraphController(VisibilityGraph* vg);
 	vector<Line*> visibleVertices(Point* ori);
 	virtual ~VisibilityGraphController();
-	bool isVisible(Point* w_i,Point* ori,Line* sweepLine,Point* w_i_1,int i,edgeContainer edges,vector<Line*> bstEdgeList);
-	vector<Line*> generateVisibleEdge(angleContainer angles,vector<Obstacle*> obstacleList,Point* ori,edgeContainer edges,VisibilityGraph* vg,vector<Line*> bstEdgeList);
+	bool isVisible(Point* w_i,Point* ori,Line* sweepLine,Point* w_i_1,int i,edgeContainer edges,deque<Line*> bstEdgeList);
+	vector<Line*> generateVisibleEdge(angleContainer angles,vector<Obstacle*> obstacleList,Point* ori,edgeContainer edges,VisibilityGraph* vg,deque<Line*> bstEdgeList);
 	void pointsAndAssociatedEdge(vector<Obstacle*> obsList);
+	deque<Line*> updateVectorEdgeList(deque<Line*> bstEdgeList,int* otherEnds,int* es,Point* ori,Point* w_i);
 };
 
 #endif /* VISIBILITYGRAPHCONTROLLER_H_ */

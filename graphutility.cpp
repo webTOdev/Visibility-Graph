@@ -124,5 +124,9 @@ double angleBetweenThreePoint(double x1,double y1,double x2,double y2,double x3,
 	return theta;
 }
 
+bool isLeft(Point* a, Point* b, Point* c){
+     return ((b->x - a->x)*(c->y - a->y) - (b->y - a->y)*(c->x - a->x)) > 0;
+}
+
 
 
