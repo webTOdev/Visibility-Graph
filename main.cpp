@@ -45,15 +45,15 @@ int main() {
 	//Point* clockwise=true;ori=new Point(540,520);
 	//Point* ori=new Point(40,20);
 	//Point* ori=new Point(440,20);
-	//Point* ori=new Point(440,120);
-	Point* ori=new Point(140,60);//Problematic input
+	Point* ori=new Point(440,120);
+	//Point* ori=new Point(140,60);//Problematic input
 	//Point* ori=new Point(140,160);
 	//Point* ori=new Point(10,5);
 	VisibilityGraphController* vg = new VisibilityGraphController(visGraph);
 	vector<Line*> visEdges=vg->constructVisGraph();
 	drawVisEdges(visEdges);
 
-	drawLine(ori->x,ori->y,ori->x+1000,ori->y);
+	//drawLine(ori->x,ori->y,ori->x+1000,ori->y);
 	for(int i=0;i<obsList.size();i++){
 		//obsList[i]->print();
 		drawObs(obsList[i],ori);

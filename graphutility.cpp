@@ -16,6 +16,9 @@ double vectorsAngle( double x, double y, double basex, double basey)
 	double y2 = double(y - basey);
 
 	double result=std::atan2(y2,x2);
+	if( result ==0 )
+			result = -M_PI;
+
 	//std::cout << "Result: " << result << std::endl;
 
 	return result;

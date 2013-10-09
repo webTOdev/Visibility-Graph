@@ -17,9 +17,9 @@ edgeContainer findIntersectionWithEdge(angleContainer angles,vector<Obstacle*> o
 Point* findPointById( vector<Point*> points,int itemToFind);
 Line* searchLineContainingPoint(Point* pt,int *lineIds,vector<Line*> lines);
 Obstacle* getObsCoveringPoint(Point* w_i,vector<Obstacle*> obsList);
-bool doesLineAndPolygonIntersects(tLinestring ls,tPolygon p,Line* sweepLine);
+bool doesLineAndPolygonIntersects(tLinestring ls,tPolygon p,Point* w_i,Point* ori,vector<Obstacle*> obsList);
 void printEdgeList(edgeContainer edges);
-bool doesTwoLineTouches(tLinestring ls1,tLinestring ls2,Point* w_i);
+bool doesTwoLineTouches(tLinestring ls1,tLinestring ls2,Point* w_i,Point* ori);
 edgeContainer eraseOneEdgeFromEdgeList(edgeContainer edges,Line* ln);
 edgeContainer insertOneEdgeInEdgeList(edgeContainer edges,Line* ln,double dist,Point* ori,Point* w_i,Point* c);
 
@@ -46,12 +46,12 @@ vector<Line*> VisibilityGraphController::constructVisGraph(){
 	vector<Line*> temp;
 	vector<Line*> visEdges=visGraph->edges;
 	visEdges.clear();
-//	for(int i=0;i<visGraph->nodes.size();i++){
-		Point* p=visGraph->nodes[0];
+	for(int i=0;i<visGraph->nodes.size();i++){
+		Point* p=visGraph->nodes[i];
 		temp.clear();
 		temp = visibleVertices(p);
 		visEdges.insert(visEdges.end(),temp.begin(),temp.end());
-//	}
+	}
 	return visEdges;
 
 }
@@ -300,7 +300,7 @@ bool VisibilityGraphController::isVisible(Point* w_i,Point* ori,Line* sweepLine,
 	tLinestring line=createLineString(sweepLine);
 	std::cout <<"Sweep Line " << " ==> " << sweepLine->a->id<<","<<sweepLine->b->id << std::endl;
 	tPolygon poly=getObsCoveringPoint(w_i,obstacleList)->poly;
-	if(doesLineAndPolygonIntersects(line,poly,sweepLine)){
+	if(doesLineAndPolygonIntersects(line,poly,w_i,ori,obstacleList)){
 		 std::cout <<"At Line 1" << std::endl;
 		return false;
 	}
@@ -318,7 +318,7 @@ bool VisibilityGraphController::isVisible(Point* w_i,Point* ori,Line* sweepLine,
 
 			 if(b){
 				 //Two line just touched not intersects
-				 if(!doesTwoLineTouches(line,eLine,w_i)){
+				 if(!doesTwoLineTouches(line,eLine,w_i,ori)){
 					 std::cout <<"At Line 4" << std::endl;
 					 return false;
 				 }
@@ -366,7 +366,7 @@ Obstacle* getObsCoveringPoint(Point* w_i,vector<Obstacle*> obsList){
 	}
 }
 
-bool doesTwoLineTouches(tLinestring ls1,tLinestring ls2,Point* w_i){
+bool doesTwoLineTouches(tLinestring ls1,tLinestring ls2,Point* w_i,Point* ori){
 	std::deque<tPoint> output;
 	int i=0;
 	bool touches=false;
@@ -379,21 +379,45 @@ bool doesTwoLineTouches(tLinestring ls1,tLinestring ls2,Point* w_i){
 			if(x1==w_i->x && y1==w_i->y){
 				touches=true;
 			}
-	    //    std::cout <<  "Intersects at : " << x1<<","<<y1<<" and Point at: "<<w_i->x<<","<<w_i->y << std::endl;
+			if(x1==ori->x && y1==ori->y){
+				touches=true;
+			}
+	        std::cout <<  "Intersects at : " << x1<<","<<y1<<" and Point at: "<<w_i->x<<","<<w_i->y<<" and Origin at: "<<ori->x<<","<<ori->y  << std::endl;
     }
 	return touches;
 }
 
-bool doesLineAndPolygonIntersects(tLinestring ls,tPolygon p,Line* sweepLine){
+bool doesLineAndPolygonIntersects(tLinestring ls,tPolygon p,Point* w_i,Point* ori,vector<Obstacle*> obsList){
 	std::vector<turn_info> turns;
 	bg::detail::get_turns::no_interrupt_policy policy;
 	bg::get_turns<false, false, bg::detail::overlay::assign_null_policy>(ls, p, turns, policy);
 
+	std::cout <<"Intersects True " << turns.size() << std::endl;
+	bool intersect=false;
     if(turns.size()>1){
-    	std::cout <<"Intersects True " << turns.size() << std::endl;
-	   	return true;
+
+    	intersect=true;
+	    //return true;
     }
-    return false;
+    tPoint a=boost::make_tuple(w_i->x, w_i->y);
+    tPoint b=boost::make_tuple(ori->x, ori->y);
+ /*	 if(turns.size()==1){
+   	 BOOST_FOREACH(turn_info const& turn, turns){
+   		double x=get<0>(doesLineAndPolygonIntersectsturn.point);
+   		double y=get<1>(turn.point);
+   		if(x==w_i->x && y==w_i->y){
+   			intersect=true;
+   			std::cout <<"Intersects at " <<x<<" , "<<y <<std::endl;
+   		}
+   	 }
+   	}*/
+    if(turns.size()==1){
+    int obsOri=getObsCoveringPoint(ori,obsList)->id;
+    int obsW_i=getObsCoveringPoint(w_i,obsList)->id;
+    if(obsOri==obsW_i)
+    	intersect=true;
+    }
+    return intersect;
 
 }
 //LineString creation sample one
