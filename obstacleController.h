@@ -32,8 +32,10 @@ void get_segments(Edge const& s) {
 	double y2=get<1,1>(s);
 	Point* p1= o->searchPoint(x1,y1);
 	Point* p2= o->searchPoint(x2,y2);
+	if(p1!=NULL && p2!=NULL){
 	Line* line=new Line(p1,p2);
 	o->setEdges(line);
+	}
 }
 
 Obstacle* createObstacle(string str){
@@ -49,7 +51,7 @@ Obstacle* createObstacle(string str){
 		bg::for_each_point(o->poly,get_coordinates<tPoint>);
 
 		 //set Edge
-			bg::for_each_segment(o->poly,get_segments<segment>);
+		bg::for_each_segment(o->poly,get_segments<segment>);
 
 
 

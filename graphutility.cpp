@@ -15,9 +15,21 @@ double vectorsAngle( double x, double y, double basex, double basey)
 	double x2 = double(x - basex);
 	double y2 = double(y - basey);
 
+
 	double result=std::atan2(y2,x2);
-	if( result ==0 )
+	std::cout << "Result: " << result <<" at point "<<basex<<","<<basey<< std::endl;
+	if( result == 0 && x<basex) //At same line and  origin to the left
+	{
 			result = -M_PI;
+
+	}
+	if( result == M_PI) //At same line and to the right
+		{
+				result = -M_PI;
+
+		}
+
+
 
 	//std::cout << "Result: " << result << std::endl;
 
