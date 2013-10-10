@@ -32,8 +32,14 @@ int main() {
 	obs=createObstacle("polygon((400 320,520 320,500 520,400 530,400 320))");
 	obsList.push_back(obs);
 
-	//obs=createObstacle("polygon((40 20,40 20))");//For data point
-	//obsList.push_back(obs);
+	obs=createObstacle("polygon((40 20,40 20))");//For data point
+	obsList.push_back(obs);
+
+	obs=createObstacle("polygon((440 20,440 20))");//For data point
+	obsList.push_back(obs);
+
+	obs=createObstacle("polygon((600 600,600 600))");//For data point
+	obsList.push_back(obs);
 
 
 	/*Obstacle* obs=createObstacle("polygon((200 20,250 20,250 200,200 200,200 20))");
