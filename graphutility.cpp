@@ -6,8 +6,6 @@
  */
 
 #include "graphutility.h"
-#include <cmath>
-#include <iostream>
 
 double vectorsAngle( double x, double y, double basex, double basey)
 {
@@ -17,7 +15,7 @@ double vectorsAngle( double x, double y, double basex, double basey)
 
 
 	double result=std::atan2(y2,x2);
-	std::cout << "Result: " << result <<" at point "<<basex<<","<<basey<< std::endl;
+	//std::cout << "Result: " << result <<" at point "<<basex<<","<<basey<< std::endl;
 	if( result == 0 && x<basex) //At same line and  origin to the left
 	{
 			result = -M_PI;
@@ -116,6 +114,18 @@ double angleBetweenThreePoint(double x1,double y1,double x2,double y2,double x3,
 bool isLeft(Point* a, Point* b, Point* c){
      return ((b->x - a->x)*(c->y - a->y) - (b->y - a->y)*(c->x - a->x)) > 0;
 }
+void fileWrite(Point* a,Point* b){
+
+	double dist = distance(a,b);
+	FILE *fp;
+	fp=fopen("test.txt", "a");
+	fprintf(fp, "%d" , a->id);
+	fprintf(fp, " %d" , b->id);
+	fprintf(fp, " %f" , dist);
+	fprintf(fp, "\n");
+	fclose(fp);
+}
+
 
 
 

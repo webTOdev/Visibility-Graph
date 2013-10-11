@@ -28,8 +28,8 @@ void drawPolygon(CImg<double> points){
 	disp.display(img);
 
 }
-void drawCircle(double x,double y){
-	img.draw_circle(x, y, 1.5, WHITE);
+void drawCircle(double x,double y,int radius,const unsigned char color[]){
+	img.draw_circle(x, y, radius, color);
 	disp.display(img);
 }
 
@@ -40,7 +40,13 @@ void drawText(double x,double y,int id,const unsigned char color[]){
 	disp.display(img);
 }
 
-void showPolygon(){
+void writeText(double x,double y,char text[],const unsigned char color[]){
+
+	img.draw_text((x-3)*scale, (y-15)*scale,text,color);
+	disp.display(img);
+}
+
+void displayImage(){
 
 	while (!disp.is_closed()) {
 							if (disp.is_keyESC() )
@@ -52,17 +58,17 @@ void showPolygon(){
 
 }
 
-void drawLine(double x1,double y1,double x2,double y2){
+void drawLine(double x1,double y1,double x2,double y2,const unsigned char color[]){
 
-	img.draw_line(x1,y1,x2,y2,GREEN);
+	img.draw_line(x1,y1,x2,y2,color);
 
 	disp.display(img);
 
 
 }
-void drawEdge(Line* a){
+void drawEdge(Line* a,const unsigned char color[]){
 
-	img.draw_line(a->a->x,a->a->y,a->b->x,a->b->y,BLUE);
+	img.draw_line(a->a->x,a->a->y,a->b->x,a->b->y,color);
 
 	disp.display(img);
 }

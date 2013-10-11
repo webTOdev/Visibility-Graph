@@ -31,6 +31,13 @@ public:
 	int* getOtherEndOfThisPoint(Point* p);
 	int* getEdgesOfThisPoint(Point* p);
 
+	const vector<Line*>& getEdges() const {
+		return edges;
+	}
+
+	void setEdges(const vector<Line*>& edges) {
+		this->edges = edges;
+	}
 };
 
 #endif /* VISIBILITYGRAPH_H_ */
