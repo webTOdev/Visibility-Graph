@@ -1,5 +1,5 @@
 Visibility Graph: It is a O(n2logn) algorithm for implementing Visibility Graph of a set of obstacles
-=================-------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
 
 Overview
 ---------
@@ -16,7 +16,7 @@ More Features
 --------------
 1.Shortest Path is calculated from a source to destination Point
 2.Dijkstra algorithm is used for this calculation (O(n2)). 
- Dijkstra Algorithm : Implementation by dziaduZLasu (https://github.com/dziaduZLasu/dijkstra)
+3.Dijkstra Algorithm : Implementation by dziaduZLasu (https://github.com/dziaduZLasu/dijkstra)
 
 
 Output
@@ -30,5 +30,4 @@ References
 2.M. deBerg et al, Computational Geometry: algorithms and applications, Springer Verlag, 1997. 
 
 by Nusrat Sultana <nusratst.cse@gmail.com>
--------------------------------------------
 A project as part of my Master's Thesis
