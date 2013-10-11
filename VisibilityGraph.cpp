@@ -58,10 +58,10 @@ void VisibilityGraph::print(){
 		std::cout<<"Total # of Edges :"<<edges.size()<<std::endl;
 		std::cout<<"Total # of Nodes :"<<nodes.size()<<std::endl;
 		std::cout<<"Obstacles :"<<std::endl;
-		/*for(int i=0;i<obstacles.size();i++){
+		for(int i=0;i<obstacles.size();i++){
 			obstacles[i]->print();
-		}*/
-		std::cout<<"Edges :"<<std::endl;
+		}
+		std::cout<<"Visible Edges :"<<std::endl;
 		for(int j=0;j<edges.size();j++){
 			edges[j]->print();
 		}
@@ -70,12 +70,18 @@ void VisibilityGraph::print(){
 			obsSides[j]->print();
 		}
 
-		std::cout<<"Vertexes :"<<std::endl;
+		std::cout<<"Graph Nodes :"<<std::endl;
 		for(int j=0;j<nodes.size();j++){
 			nodes[j]->print();
 		}
 
 
+}
+
+double VisibilityGraph::value()
+{
+
+	return 0.0;
 }
 
 int* VisibilityGraph::getOtherEndOfThisPoint(Point* p){

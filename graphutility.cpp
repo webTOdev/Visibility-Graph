@@ -79,6 +79,7 @@ bool isClockwise(Point* sweepPoint,Point* b){
 
 }
 
+//Checks whether the 3 points represents a straight line
 bool checkCoLinear(Point* a,Point* b,Point* c){
 	//Sum over the edges, (x2-x1)(y2+y1). If the result is positive the curve is clockwise
 	double x1=a->x;

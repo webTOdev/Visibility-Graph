@@ -58,15 +58,7 @@ Obstacle::Obstacle(string polyStr){
 }
 
 void Obstacle::print(){
-	std::cout<<"Obstacle id :"<<id<<std::endl;
-	std::cout<<"Vertexes :"<<std::endl;
-	for(int i=0;i<vertices.size();i++){
-		vertices[i]->print();
-	}
-	std::cout<<"Edges :"<<std::endl;
-	for(int i=0;i<edges.size();i++){
-			edges[i]->print();
-		}
+	std::cout << "Obstacle Polygon: " << dsv(poly) << std::endl;
 
 }
 double Obstacle::value(){

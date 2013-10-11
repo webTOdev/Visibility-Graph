@@ -14,7 +14,7 @@
 #include "boostHelper.h"
 #include "line.h"
 
-class VisibilityGraph {
+class VisibilityGraph: public Geometry{
 
 public:
 	vector<Point*> nodes;
@@ -27,7 +27,8 @@ public:
 	VisibilityGraph();
 	VisibilityGraph(vector<Obstacle*> o);
 	virtual ~VisibilityGraph();
-	void print();
+	virtual void print();
+	virtual double value();
 	int* getOtherEndOfThisPoint(Point* p);
 	int* getEdgesOfThisPoint(Point* p);
 

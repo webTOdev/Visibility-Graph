@@ -46,15 +46,14 @@ void writeText(double x,double y,char text[],const unsigned char color[]){
 	disp.display(img);
 }
 
-void displayImage(){
+void displayImage() {
 
 	while (!disp.is_closed()) {
-							if (disp.is_keyESC() )
-								break;
-							disp.wait();
-				}
-				img.save("r-tree.bmp"); // save the image
-
+		if (disp.is_keyESC())
+			break;
+		disp.wait();
+	}
+	img.save("r-tree.bmp"); // save the image
 
 }
 
