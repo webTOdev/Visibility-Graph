@@ -15,12 +15,15 @@
 #include "VisibilityGraph.h"
 #include "graphutility.h"
 #include "dijkstra.h"
+#include <time.h>
 
+clock_t startTime;
 void findShortestPath(VisibilityGraph* vg,double sourceX,double sourceY,double destX,double destY);
 void drawObs(Obstacle* obs,Point* ori);
 void drawVisEdges(vector<Line*> visEdges);
 int main() {
 
+	startTime = clock();
 	vector<Obstacle*> obsList;
 	Obstacle* obs=createObstacle("polygon((40 140,40 300,100 280,120 200,100 140,40 140))");
 	obsList.push_back(obs);
@@ -74,6 +77,8 @@ int main() {
 
 
 	findShortestPath(visGraph,40,20,600,600);
+	/* Code you want timed here */
+	printf("Time elapsed: %f s\n", ((double)clock() - startTime) / CLOCKS_PER_SEC);
 	displayImage();
 
 	return 0;
