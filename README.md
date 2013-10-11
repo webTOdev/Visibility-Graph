@@ -2,7 +2,7 @@ VisibilityGraphBoost is a O(n2logn) algorithm for implementing Visibility Graph 
 ======================================================================================================
 
 Overview
-==========
+---------
 
 1.Have multiple obstacles and some single points outside the obstacles.
 2.All the Obstacles and Lines are calculated using Boost Model package.
