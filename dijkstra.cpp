@@ -89,7 +89,7 @@ void initiateDijkstra(int numVertice,int numEdges,bool directed,int source,int d
     FILE *input = fopen("test.txt", "r+");
     verticesNum = numVertice;
     edgesNum=numEdges;
-    printf("Vertice Num %d , Edge Num %d",verticesNum,edgesNum);
+    //printf("Vertice Num %d , Edge Num %d",verticesNum,edgesNum);
     comparisionMatrix.resize(verticesNum); // first edge ™ will turn
 
     for (int i = 0; i < edgesNum; i++) {
@@ -105,7 +105,7 @@ void initiateDijkstra(int numVertice,int numEdges,bool directed,int source,int d
    // fscanf(input, "%d %d", &s, &g); // sTART gOAL
     prim_dijkstra(s); // true false targets not addressed
 
-    printf("[DIJKSTRA]\nThe cost of the minimum path from %d to %d  %s is %lf\n", s, g, (directed)?"directed":"not directed", pathWeight[g]); // index 5 czyli v nr 6
+    printf("[DIJKSTRA]\nThe cost of the minimum path from %d to %d %s is %lf\n", s, g, (directed)?"directed":"", pathWeight[g]); // index 5 czyli v nr 6
     printPath(g);
     printf("\n");
 }

@@ -121,7 +121,7 @@ void findShortestPath(VisibilityGraph* vg, double sourceX, double sourceY,
 	int numOfEdges = vg->edges.size();
 	int sourcePointId = searchPointByCoord(vg->nodes, sourceX, sourceY)->id;
 	int destPointId = searchPointByCoord(vg->nodes, destX, destY)->id;
-	printf("Finding shortest path from %d -> %d\nNum od Edges %d-Num of Vertices %d", sourcePointId, destPointId,numOfEdges,numOfPoints);
+	printf("\nFinding shortest path from %d -> %d\n", sourcePointId, destPointId,numOfEdges,numOfPoints);
 	Point* start;
 	Point* goal;
 	initiateDijkstra(numOfPoints, numOfEdges, false, sourcePointId,
@@ -129,7 +129,7 @@ void findShortestPath(VisibilityGraph* vg, double sourceX, double sourceY,
 	int *shortestPath = getShortestPath();
 	int i = 0;
 	//Print the Shortest Path
-	printf("The Shortest Path is ");
+	printf("The Shortest Path is :");
 	while (shortestPath[i] != -1) {
 		printf("%d ", shortestPath[i]);
 
