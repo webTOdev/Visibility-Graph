@@ -174,30 +174,41 @@ int main() {
 	/* Code you want timed here */
 	printf("Time elapsed: %f s\n", ((double)clock() - startTime) / CLOCKS_PER_SEC);
 
-
-	//Point* p = new Point(650,700);
 	//obs=createObstacle("polygon((650 400,720 400,720 550,650 400))");//For Obs
 	obs=createObstacle("polygon((250 400,320 400,320 500,250 400))");//For Obs
 	Obstacle* o = visGraph->addObstacle(obs);
 	vector<Point*> obsVertices = o->getVertices();
     vg->setVisGraph(visGraph);
-	for (int i=0;i<obsVertices.size();i++) {
-		Point* point = obsVertices[i];
-		vector<Line*> temp = vg->visibleVertices(point);
-		for (int i = 0; i < temp.size(); i++) {
-			drawEdge(temp[i], RED);
-		}
-	}
-	drawCircle(650,700,3,RED);
-	drawObs(o,ori);
 
+    std::cout<<"Before erasing intersecting lines with new obstacle "<<visGraph->edges.size()<<std::endl;
+    //Remove Intersecting edges of this obstacle
 	for(int i=0;i<visGraph->edges.size();i++){
 		Line* l = visGraph->edges[i];
 		if(vg->findEdgeAndObsIntersects(l,o)){
 			drawEdge(l,WHITE);
+			visGraph->removeEdgeFromVisGraph(l);
 		}
 	}
 
+	std::cout<<"After erasing intersecting lines with new obstacle "<<visGraph->edges.size()<<std::endl;
+
+	//Insert new edges from the new obstacle
+	for (int i=0;i<obsVertices.size();i++) {
+		Point* point = obsVertices[i];
+		vector<Line*> temp = vg->visibleVertices(point);
+		visGraph->insertEdgeInVisGraph(temp);
+		for (int i = 0; i < temp.size(); i++) {
+			drawEdge(temp[i], RED);
+		}
+	}
+	//drawCircle(650,700,3,RED);
+	drawObs(o,ori);
+
+
+
+	std::cout<<"After inserting visible lines with new obstacle "<<visGraph->edges.size()<<std::endl;
+
+	//drawVisEdges(visGraph->edges);
 	displayImage();
 
 	return 0;

@@ -146,3 +146,31 @@ VisibilityGraph::~VisibilityGraph() {
 	// TODO Auto-generated destructor stub
 }
 
+void VisibilityGraph::removeEdgeFromVisGraph(Line* l){
+	std::vector<Line*>::iterator it;
+	for (it = edges.begin(); it != edges.end() /* not hoisted */; /* no increment */)
+	{
+	    if ((*it)->a->id == l->a->id && (*it)->b->id == l->b->id)
+	    {
+	        it = edges.erase(it);
+	    }
+	    else
+	    {
+	        ++it;
+	    }
+	}
+}
+
+bool VisibilityGraph::edgeExists(Line* l){
+	for(int i=0;i<edges.size();i++){
+		if(edges[i]->a->id == l->a->id && edges[i]->b->id == l->b->id){
+			return true;
+		}
+		return false;
+	}
+}
+
+void  VisibilityGraph::insertEdgeInVisGraph(vector<Line*> lines){
+	edges.insert(edges.end(),lines.begin(),lines.end());
+}
+
