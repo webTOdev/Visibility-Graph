@@ -371,7 +371,6 @@ bool VisibilityGraphController::isVisible(Point* w_i,Point* ori,Line* sweepLine,
 
 //Search in which Obstacle this point lies
 Obstacle* getObsCoveringPoint(Point* w_i,vector<Obstacle*> obsList){
-	std::cout<< "Obs List size " << obsList.size()<<std::endl;
 	for(int i=0;i<obsList.size();i++){
 		if(obsList[i]->searchPoint(w_i->x,w_i->y)){
 			return obsList[i];
@@ -416,6 +415,21 @@ bool doesLineAndPolygonIntersects(tLinestring ls,tPolygon p,Point* w_i,Point* or
 		int obsW_i=getObsCoveringPoint(w_i,obsList)->id;
 		if(obsOri==obsW_i)
 			intersect=true;
+    }
+    return intersect;
+
+}
+
+//Find whether the new obstacle intersect with the line : for Incremental Vis Graph
+bool VisibilityGraphController::findEdgeAndObsIntersects(Line* line,Obstacle* o){
+	tLinestring ls = createLineString(line);
+	tPolygon p = o->poly;
+	std::vector<turn_info> turns;
+	bg::detail::get_turns::no_interrupt_policy policy;
+	bg::get_turns<false, false, bg::detail::overlay::assign_null_policy>(ls, p, turns, policy);
+	bool intersect=false;
+    if(turns.size()>1){
+    	intersect=true;
     }
     return intersect;
 

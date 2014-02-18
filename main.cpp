@@ -176,7 +176,8 @@ int main() {
 
 
 	//Point* p = new Point(650,700);
-	obs=createObstacle("polygon((650 700,720 700,720 750,650 700))");//For data point
+	//obs=createObstacle("polygon((650 400,720 400,720 550,650 400))");//For Obs
+	obs=createObstacle("polygon((250 400,320 400,320 500,250 400))");//For Obs
 	Obstacle* o = visGraph->addObstacle(obs);
 	vector<Point*> obsVertices = o->getVertices();
     vg->setVisGraph(visGraph);
@@ -189,6 +190,13 @@ int main() {
 	}
 	drawCircle(650,700,3,RED);
 	drawObs(o,ori);
+
+	for(int i=0;i<visGraph->edges.size();i++){
+		Line* l = visGraph->edges[i];
+		if(vg->findEdgeAndObsIntersects(l,o)){
+			drawEdge(l,WHITE);
+		}
+	}
 
 	displayImage();
 
