@@ -52,6 +52,39 @@ VisibilityGraph::VisibilityGraph(vector<Obstacle*> o){
 	}
 }
 
+
+Obstacle* VisibilityGraph::addObstacle(Obstacle* o){
+	obstacles.push_back(o);
+
+
+		vector<Line*> es=o->getEdges();
+		obsSides.insert(obsSides.end(),es.begin(),es.end());
+		vector<Point*> ps = o->getVertices();
+		nodes.insert(nodes.end(),ps.begin(),ps.end());
+
+		for(int j=0;j<es.size();j++){
+			Line* l=es[j];
+			if(pointVSPoints[l->a->id][0]==-1){
+				pointVSPoints[l->a->id][0]=l->b->id;
+				pointVSEdges[l->a->id][0]=l->id;
+			}
+			else{
+				pointVSPoints[l->a->id][1]=l->b->id;
+				pointVSEdges[l->a->id][1]=l->id;
+			}
+			if(pointVSPoints[l->b->id][0]==-1){
+				pointVSPoints[l->b->id][0]=l->a->id;
+				pointVSEdges[l->b->id][0]=l->id;
+			}
+			else{
+				pointVSPoints[l->b->id][1]=l->a->id;
+				pointVSEdges[l->b->id][1]=l->id;
+			}
+		}
+
+		return o;
+
+}
 void VisibilityGraph::print(){
 		std::cout<<"Total # of Obstacles :"<<obstacles.size()<<std::endl;
 		std::cout<<"Total # of Obstacle Edges :"<<obsSides.size()<<std::endl;

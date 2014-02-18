@@ -66,6 +66,16 @@ public:
 	vector<Line*> generateVisibleEdge(angleContainer angles,vector<Obstacle*> obstacleList,Point* ori,edgeContainer edges,VisibilityGraph* vg);
 	edgeContainer updateEdgeList(edgeContainer edges,int* otherEnds,int* es,Point* ori,Point* w_i);
 	vector<Line*> constructVisGraph();
+	vector<Obstacle*> getObstacles(){
+		return obstacleList;
+	}
+	VisibilityGraph* getVisGraph(){
+		return visGraph;
+	}
+	void setVisGraph(VisibilityGraph* vGraph){
+			visGraph = vGraph;
+			obstacleList=vGraph->obstacles;
+		}
 };
 
 #endif /* VISIBILITYGRAPHCONTROLLER_H_ */

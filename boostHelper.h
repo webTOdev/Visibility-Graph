@@ -36,6 +36,7 @@ typedef bg::model::referring_segment<tPoint> segment;
 typedef boost::geometry::model::polygon<tPoint> tPolygon;
 typedef bg::model::linestring<tPoint> tLinestring;
 typedef bg::model::ring<tPoint> tRing;
+typedef std::pair<box, unsigned> value;
 
 BOOST_GEOMETRY_REGISTER_BOOST_TUPLE_CS(cs::cartesian);
 BOOST_GEOMETRY_REGISTER_C_ARRAY_CS(cs::cartesian);

@@ -21,6 +21,100 @@ clock_t startTime;
 void findShortestPath(VisibilityGraph* vg,double sourceX,double sourceY,double destX,double destY);
 void drawObs(Obstacle* obs,Point* ori);
 void drawVisEdges(vector<Line*> visEdges);
+
+
+int mainst(void)
+{
+
+	CImg<double> points(6,2);
+    // polygons
+    std::vector<polygon> polygons;
+    linestring_2d ls;
+    tPolygon poly;
+    std::vector<tPolygon> polys;
+
+    vector<Obstacle*> obsList;
+    	Obstacle* obs=createObstacle("polygon((40 140,40 300,100 280,120 200,100 140,40 140))");
+    	obsList.push_back(obs);
+    	polys.push_back(obs->poly);
+
+    	obs=createObstacle("polygon((200 40,280 40,320 200,180 190,200 40))");
+    	obsList.push_back(obs);
+    	polys.push_back(obs->poly);
+
+    	obs=createObstacle("polygon((30 330,180 350,120 450,30 330))");
+    	obsList.push_back(obs);
+    	polys.push_back(obs->poly);
+
+    	obs=createObstacle("polygon((400 320,520 320,500 520,400 530,400 320))");
+    	obsList.push_back(obs);
+    	polys.push_back(obs->poly);
+
+    	obs=createObstacle("polygon((40 20,40 20))");//For data point
+    	obsList.push_back(obs);
+    	polys.push_back(obs->poly);
+
+    	obs=createObstacle("polygon((440 20,440 20))");//For data point
+    	obsList.push_back(obs);
+    	polys.push_back(obs->poly);
+
+    	obs=createObstacle("polygon((600 600,600 600))");//For data point
+    	obsList.push_back(obs);
+    	polys.push_back(obs->poly);
+
+
+    	for(int i=0;i<obsList.size();i++){
+    			//obsList[i]->print();
+    			drawObs(obsList[i],NULL);
+
+    		}
+
+       // display polygons
+    std::cout << "generated polygons:" << std::endl;
+
+    BOOST_FOREACH(tPolygon const& p, polys){
+       std::cout << bg::wkt<tPolygon>(p) << std::endl;
+
+    }
+    // create the rtree using default constructor
+    bgi::rtree< value, bgi::rstar<16, 4> > rtree;
+
+    // fill the spatial index
+    for ( unsigned i = 0 ; i < polys.size() ; ++i )
+    {
+        // calculate polygon bounding box
+        box b = bg::return_envelope<box>(polys[i]);
+        // insert new value
+        rtree.insert(std::make_pair(b, i));
+    }
+
+    // find values intersecting some area defined by a box
+    box query_box(point(40, 40), point(600, 600));
+    std::vector<value> result_s;
+    rtree.query(bgi::intersects(query_box), std::back_inserter(result_s));
+
+    // find 5 nearest values to a point
+    std::vector<value> result_n;
+    rtree.query(bgi::nearest(point(0, 0), 5), std::back_inserter(result_n));
+
+    // display results
+    std::cout << "spatial query box:" << std::endl;
+    std::cout << bg::wkt<box>(query_box) << std::endl;
+    std::cout << "spatial query result:" << std::endl;
+    BOOST_FOREACH(value const& v, result_s)
+        std::cout << bg::wkt<tPolygon>(polys[v.second]) << std::endl;
+
+    std::cout << "knn query point:" << std::endl;
+    std::cout << bg::wkt<point>(point(80, 80)) << std::endl;
+    std::cout << "knn query result:" << std::endl;
+    BOOST_FOREACH(value const& v, result_n)
+        std::cout << bg::wkt<tPolygon>(polys[v.second]) << std::endl;
+
+ //   displayImage();
+    return 0;
+}
+
+
 int main() {
 
 	startTime = clock();
@@ -79,10 +173,28 @@ int main() {
 	findShortestPath(visGraph,40,20,600,600);
 	/* Code you want timed here */
 	printf("Time elapsed: %f s\n", ((double)clock() - startTime) / CLOCKS_PER_SEC);
+
+
+	//Point* p = new Point(650,700);
+	obs=createObstacle("polygon((650 700,720 700,720 750,650 700))");//For data point
+	Obstacle* o = visGraph->addObstacle(obs);
+	vector<Point*> obsVertices = o->getVertices();
+    vg->setVisGraph(visGraph);
+	for (int i=0;i<obsVertices.size();i++) {
+		Point* point = obsVertices[i];
+		vector<Line*> temp = vg->visibleVertices(point);
+		for (int i = 0; i < temp.size(); i++) {
+			drawEdge(temp[i], RED);
+		}
+	}
+	drawCircle(650,700,3,RED);
+	drawObs(o,ori);
+
 	displayImage();
 
 	return 0;
 }
+
 
 
 void drawVisEdges(vector<Line*> visEdges){

@@ -371,6 +371,7 @@ bool VisibilityGraphController::isVisible(Point* w_i,Point* ori,Line* sweepLine,
 
 //Search in which Obstacle this point lies
 Obstacle* getObsCoveringPoint(Point* w_i,vector<Obstacle*> obsList){
+	std::cout<< "Obs List size " << obsList.size()<<std::endl;
 	for(int i=0;i<obsList.size();i++){
 		if(obsList[i]->searchPoint(w_i->x,w_i->y)){
 			return obsList[i];

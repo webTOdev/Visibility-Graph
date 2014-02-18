@@ -31,6 +31,7 @@ public:
 	virtual double value();
 	int* getOtherEndOfThisPoint(Point* p);
 	int* getEdgesOfThisPoint(Point* p);
+	Obstacle* addObstacle(Obstacle* o);
 
 	const vector<Line*>& getEdges() const {
 		return edges;
