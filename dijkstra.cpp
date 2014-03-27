@@ -89,12 +89,11 @@ void initiateDijkstra(int numVertice,int numEdges,bool directed,int source,int d
     FILE *input = fopen("test.txt", "r+");
     verticesNum = numVertice;
     edgesNum=numEdges;
-    //printf("Vertice Num %d , Edge Num %d",verticesNum,edgesNum);
+    printf("Vertice Num %d , Edge Num %d",verticesNum,edgesNum);
     comparisionMatrix.resize(verticesNum); // first edge ™ will turn
 
     for (int i = 0; i < edgesNum; i++) {
         fscanf(input, "%d %d %lf", &a, &b, &c); // c = Cost edge from a to b
-
         comparisionMatrix[a].push_back(make_pair(b, c)); // directed not addressed
         if(!directed)
         comparisionMatrix[b].push_back(make_pair(a, c)); //
@@ -120,7 +119,7 @@ void printPath(int dest) {
 	static int index=0;
 	if (prev[dest] != -1)
 		printPath(prev[dest]);
-	//printf("%d ", dest);
+	printf("%d ", dest);
 	smallestPath[index]=dest;
 	index++;
 }

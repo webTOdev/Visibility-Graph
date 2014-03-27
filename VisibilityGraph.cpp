@@ -166,10 +166,18 @@ bool VisibilityGraph::edgeExists(Line* l){
 		if(edges[i]->a->id == l->a->id && edges[i]->b->id == l->b->id){
 			return true;
 		}
-		return false;
 	}
+	return false;
 }
 
+Line* VisibilityGraph::findEdgeWithPoints(Point* a,Point* b){
+	for(int i=0;i<edges.size();i++){
+		if(edges[i]->a->id == a->id && edges[i]->b->id == b->id){
+			return edges[i];
+		}
+	}
+	return NULL;
+}
 void  VisibilityGraph::insertEdgeInVisGraph(vector<Line*> lines){
 	edges.insert(edges.end(),lines.begin(),lines.end());
 }

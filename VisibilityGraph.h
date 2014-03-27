@@ -35,6 +35,7 @@ public:
 	void removeEdgeFromVisGraph(Line* l);
 	bool edgeExists(Line* l);
 	void insertEdgeInVisGraph(vector<Line*> lines);
+	Line* findEdgeWithPoints(Point* a,Point* b);
 
 	const vector<Line*>& getEdges() const {
 		return edges;

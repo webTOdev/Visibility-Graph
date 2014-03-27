@@ -154,7 +154,6 @@ vector<Line*> VisibilityGraphController::generateVisibleEdge(angleContainer angl
 		  {
 			  w_i->visited=true;
 			  ori->addVisible(w_i);
-			  fileWrite(ori,w_i);
 			  visibleEdges.push_back(new Line(ori,w_i));
 			  std::cout<<"Visible Edges "<<ori->id<<"->"<<w_i->id<<std::endl;
 		  }
@@ -446,6 +445,36 @@ tLinestring createHorizontalLine(Point* p){
 tLinestring createLineString(Line* line){
 	 tLinestring edge = boost::assign::tuple_list_of(line->a->x, line->a->y)(line->b->x, line->b->y);
 	 return edge;
+}
+
+VisibilityGraph* VisibilityGraphController::addNewObstacleForIncrementalVisGraph(
+		VisibilityGraph* vGraph,Obstacle* obs) {
+
+	Obstacle* o = vGraph->addObstacle(obs);
+	vector<Point*> obsVertices = o->getVertices();
+	setVisGraph(vGraph);
+
+	//Remove existing edges of graph that intersects with this obstacle
+	for (int i = 0; i < vGraph->edges.size(); i++) {
+		Line* l = vGraph->edges[i];
+		if (findEdgeAndObsIntersects(l, o)) {
+			vGraph->removeEdgeFromVisGraph(l);
+			//Also remove the opposite edge , for example after removing 1->13 also remove 13->1
+			Line* line = vGraph->findEdgeWithPoints(l->b, l->a);
+			if (line != NULL) {
+				vGraph->removeEdgeFromVisGraph(line);
+			}
+		}
+	}
+
+	//Search for the visible edges from the new obstacle's nodes and Insert them
+	for (int i = 0; i < obsVertices.size(); i++) {
+		Point* point = obsVertices[i];
+		vector<Line*> temp = visibleVertices(point);
+		vGraph->insertEdgeInVisGraph(temp);
+	}
+
+	return vGraph;
 }
 
 

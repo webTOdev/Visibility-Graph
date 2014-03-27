@@ -77,6 +77,7 @@ public:
 			visGraph = vGraph;
 			obstacleList=vGraph->obstacles;
 		}
+	VisibilityGraph* addNewObstacleForIncrementalVisGraph(VisibilityGraph* vg,Obstacle* obs);
 };
 
 #endif /* VISIBILITYGRAPHCONTROLLER_H_ */
