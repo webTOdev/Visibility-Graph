@@ -52,6 +52,7 @@ vector<Line*> VisibilityGraphController::constructVisGraph(){
 		visEdges.insert(visEdges.end(),temp.begin(),temp.end());
 	}
 	visGraph->setEdges(visEdges);
+	std::cout << "Initial Visibility Graph Constructed Successfully "<<std::endl;
 	return visEdges;
 
 }
@@ -60,7 +61,7 @@ vector<Line*> VisibilityGraphController::visibleVertices(Point* ori){
 	tLinestring centerLine = createHorizontalLine(ori); //SweepLine initialize to horizontal
 	angleContainer angles;
 
-	std::cout << "Origin at Point: "<<ori->id<<std::endl;
+	//std::cout << "Origin at Point: "<<ori->id<<std::endl;
 	//Iterate over each of the obstacles and sort all the points
 	//Took help from  multi index facility of boost for angular sorting
 	for(int m=0;m<obstacleList.size();m++){
@@ -76,10 +77,10 @@ vector<Line*> VisibilityGraphController::visibleVertices(Point* ori){
 		}
 	}
 		 //Print the angles
-	     std::cout << "Points sorted List by Angle: " << std::endl;
+	    // std::cout << "Points sorted List by Angle: " << std::endl;
 	     key_index_t& kindex = angles.get<key_tag>();
 	     for( key_index_t::iterator k = kindex.begin(); k != kindex.end(); ++k ){
-	        std::cout << "Point :"<< k->second->id << " ==> " << k->first << std::endl;
+	        //std::cout << "Point :"<< k->second->id << " ==> " << k->first << std::endl;
 	     }
 
 	     edgeContainer bstEdges;
@@ -146,7 +147,7 @@ vector<Line*> VisibilityGraphController::generateVisibleEdge(angleContainer angl
 			  w_i_1=(--k)->second;
 			  ++k;
 		  }
-		  std::cout << "Sweeps at "<<w_i->id<<std::endl;
+		 // std::cout << "Sweeps at "<<w_i->id<<std::endl;
 		  index++;
 
 		  sweepLine=new Line(ori,w_i);
@@ -155,7 +156,7 @@ vector<Line*> VisibilityGraphController::generateVisibleEdge(angleContainer angl
 			  w_i->visited=true;
 			  ori->addVisible(w_i);
 			  visibleEdges.push_back(new Line(ori,w_i));
-			  std::cout<<"Visible Edges "<<ori->id<<"->"<<w_i->id<<std::endl;
+			 // std::cout<<"Visible Edges "<<ori->id<<"->"<<w_i->id<<std::endl;
 		  }
 		  //Check for clockwise side edges
 		  //Each points has two edge associated and thats why two new points
@@ -473,6 +474,36 @@ VisibilityGraph* VisibilityGraphController::addNewObstacleForIncrementalVisGraph
 		vector<Line*> temp = visibleVertices(point);
 		vGraph->insertEdgeInVisGraph(temp);
 	}
+
+	std::cout << "***Incremental Vis Graph*** "<<"Obstacle with ID "<<obs->id<<" added successfully in Visibility Graph"<<std::endl;
+
+	return vGraph;
+}
+
+VisibilityGraph* VisibilityGraphController::removeDataPointFromVisGraph(
+		VisibilityGraph* vGraph, Obstacle* obs) {
+
+	vector<Point*> obsVertices = obs->vertices;
+	//Find the Edges with this vertices and remove them from Graph
+	for (int i = 0; i < obsVertices.size(); i++) {
+		vector<Line*> visEdges = vGraph->findEdgesWithThisPoint(obsVertices[i]);
+		for (int j = 0; j < visEdges.size(); j++) {
+			vGraph->removeEdgeFromVisGraph(visEdges[j]);
+		}
+
+		//Now remove the vertex
+		vGraph->removeNodeFromVisGraph(obsVertices[i]);
+	}
+
+	//Now remove the Sides of this Obstacle , in case of data point there is only side with same point eg : side=point->point
+	vector<Line*> visObsSide = obs->edges;
+	for(int k=0;k<visObsSide.size();k++){
+		vGraph->removeObsSideFromVisGraph(visObsSide[k]);
+	}
+	//Now remove the data point
+	vGraph->removeObstacleFromVisGraph(obs);
+	std::cout << "***Incremental Vis Graph*** "<<"Obstacle with ID "<<obs->id<<" removed successfully from Visibility Graph"<<std::endl;
+
 
 	return vGraph;
 }

@@ -44,7 +44,7 @@ Obstacle::Obstacle(){
 }
 
 Obstacle::Obstacle(string polyStr){
-
+	polyString=polyStr;
 	bg::read_wkt(polyStr,poly);
 	bg::correct(poly);
 	//bg::convex_hull(poly, hull);
@@ -58,7 +58,8 @@ Obstacle::Obstacle(string polyStr){
 }
 
 void Obstacle::print(){
-	std::cout << "Obstacle Polygon: " << dsv(poly) << std::endl;
+	//std::cout << "Obstacle Polygon: " << dsv(poly) << "  ID: "<< id <<" polyString: "<<polyString<< std::endl;
+	std::cout << "Obstacle Polygon: " << polyString<< "  ID: "<< id << std::endl;
 
 }
 double Obstacle::value(){

@@ -36,6 +36,20 @@ public:
 	bool edgeExists(Line* l);
 	void insertEdgeInVisGraph(vector<Line*> lines);
 	Line* findEdgeWithPoints(Point* a,Point* b);
+	Obstacle* searchObsWithString(string polyStr){
+		for(int i=0;i<obstacles.size();i++){
+			if(obstacles[i]->polyString == polyStr){
+				return obstacles[i];
+			}
+		}
+	}
+
+	vector<Line*> findEdgesWithThisPoint(Point* a);
+	//Incremental Vis Graph
+	void removeObstacleFromVisGraph(Obstacle* obs);
+	void removeNodeFromVisGraph(Point* a);
+	void removeObsSideFromVisGraph(Line* l);
+
 
 	const vector<Line*>& getEdges() const {
 		return edges;

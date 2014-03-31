@@ -10,10 +10,12 @@
 #include<vector>
 #include<set>
 #include "dijkstra.h"
+#include <math.h>
 
 using namespace std;
 
 const int infty = 1000000000; // limit
+const int MAX_NUM_VERTEX=pow(2,16);
 int verticesNum;
 int edgesNum;
 vector< vector< pair<int, double> > > comparisionMatrix;
@@ -89,8 +91,8 @@ void initiateDijkstra(int numVertice,int numEdges,bool directed,int source,int d
     FILE *input = fopen("test.txt", "r+");
     verticesNum = numVertice;
     edgesNum=numEdges;
-    printf("Vertice Num %d , Edge Num %d",verticesNum,edgesNum);
-    comparisionMatrix.resize(verticesNum); // first edge ™ will turn
+    printf("Vertice Num %d , Edge Num %d\n",verticesNum,edgesNum);
+    comparisionMatrix.resize(MAX_NUM_VERTEX); // first edge ™ will turn
 
     for (int i = 0; i < edgesNum; i++) {
         fscanf(input, "%d %d %lf", &a, &b, &c); // c = Cost edge from a to b
@@ -104,7 +106,7 @@ void initiateDijkstra(int numVertice,int numEdges,bool directed,int source,int d
    // fscanf(input, "%d %d", &s, &g); // sTART gOAL
     prim_dijkstra(s); // true false targets not addressed
 
-    printf("[DIJKSTRA]\nThe cost of the minimum path from %d to %d %s is %lf\n", s, g, (directed)?"directed":"", pathWeight[g]); // index 5 czyli v nr 6
+    printf("[DIJKSTRA]\tThe cost of the minimum path from %d to %d %s is %lf\n", s, g, (directed)?"directed":"", pathWeight[g]); // index 5 czyli v nr 6
     printPath(g);
     printf("\n");
 }

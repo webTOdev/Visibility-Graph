@@ -29,7 +29,7 @@ void drawPolygon(CImg<double> points){
 
 }
 void drawCircle(double x,double y,int radius,const unsigned char color[]){
-	img.draw_circle(x, y, radius, color);
+	img.draw_circle(x*scale, y*scale, radius, color);
 	disp.display(img);
 }
 
@@ -59,7 +59,7 @@ void displayImage() {
 
 void drawLine(double x1,double y1,double x2,double y2,const unsigned char color[]){
 
-	img.draw_line(x1,y1,x2,y2,color);
+	img.draw_line(x1*scale,y1*scale,x2*scale,y2*scale,color);
 
 	disp.display(img);
 
@@ -67,7 +67,7 @@ void drawLine(double x1,double y1,double x2,double y2,const unsigned char color[
 }
 void drawEdge(Line* a,const unsigned char color[]){
 
-	img.draw_line(a->a->x,a->a->y,a->b->x,a->b->y,color);
+	img.draw_line(a->a->x*scale,a->a->y*scale,a->b->x*scale,a->b->y*scale,color);
 
 	disp.display(img);
 }

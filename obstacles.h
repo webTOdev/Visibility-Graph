@@ -25,6 +25,7 @@ class Obstacle : public Geometry
 	vector<Point*> vertices;
 	tPolygon poly;
 	int id;
+	string polyString; //Use this string to get the obstacle
 
 	Obstacle();
 	Obstacle(string polyStr);

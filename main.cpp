@@ -23,95 +23,6 @@ void findShortestPath(VisibilityGraph* vg, double sourceX, double sourceY,
 void drawObs(Obstacle* obs, Point* ori);
 void drawAndWriteFileVisEdges(vector<Line*> visEdges);
 
-int mainst(void) {
-
-	CImg<double> points(6, 2);
-	// polygons
-	std::vector<polygon> polygons;
-	linestring_2d ls;
-	tPolygon poly;
-	std::vector<tPolygon> polys;
-
-	vector<Obstacle*> obsList;
-	//Create a list of test obstacle
-	Obstacle* obs = createObstacle(
-			"polygon((40 140,40 300,100 280,120 200,100 140,40 140))");
-	obsList.push_back(obs);
-	polys.push_back(obs->poly);
-
-	obs = createObstacle("polygon((200 40,280 40,320 200,180 190,200 40))");
-	obsList.push_back(obs);
-	polys.push_back(obs->poly);
-
-	obs = createObstacle("polygon((30 330,180 350,120 450,30 330))");
-	obsList.push_back(obs);
-	polys.push_back(obs->poly);
-
-	obs = createObstacle("polygon((400 320,520 320,500 520,400 530,400 320))");
-	obsList.push_back(obs);
-	polys.push_back(obs->poly);
-
-	obs = createObstacle("polygon((40 20,40 20))"); //For data point
-	obsList.push_back(obs);
-	polys.push_back(obs->poly);
-
-	obs = createObstacle("polygon((440 20,440 20))"); //For data point
-	obsList.push_back(obs);
-	polys.push_back(obs->poly);
-
-	obs = createObstacle("polygon((600 600,600 600))"); //For data point
-	obsList.push_back(obs);
-	polys.push_back(obs->poly);
-
-	for (int i = 0; i < obsList.size(); i++) {
-		//obsList[i]->print();
-		drawObs(obsList[i], NULL);
-
-	}
-
-	// display polygons
-	std::cout << "generated polygons:" << std::endl;
-
-	BOOST_FOREACH(tPolygon const& p, polys) {
-		std::cout << bg::wkt<tPolygon>(p) << std::endl;
-
-	}
-	// create the rtree using default constructor
-	bgi::rtree<value, bgi::rstar<16, 4> > rtree;
-
-	// fill the spatial index
-	for (unsigned i = 0; i < polys.size(); ++i) {
-		// calculate polygon bounding box
-		box b = bg::return_envelope<box>(polys[i]);
-		// insert new value
-		rtree.insert(std::make_pair(b, i));
-	}
-
-	// find values intersecting some area defined by a box
-	box query_box(point(40, 40), point(600, 600));
-	std::vector<value> result_s;
-	rtree.query(bgi::intersects(query_box), std::back_inserter(result_s));
-
-	// find 5 nearest values to a point
-	std::vector<value> result_n;
-	rtree.query(bgi::nearest(point(0, 0), 5), std::back_inserter(result_n));
-
-	// display results
-	std::cout << "spatial query box:" << std::endl;
-	std::cout << bg::wkt<box>(query_box) << std::endl;
-	std::cout << "spatial query result:" << std::endl;
-	BOOST_FOREACH(value const& v, result_s)
-		std::cout << bg::wkt<tPolygon>(polys[v.second]) << std::endl;
-
-	std::cout << "knn query point:" << std::endl;
-	std::cout << bg::wkt<point>(point(80, 80)) << std::endl;
-	std::cout << "knn query result:" << std::endl;
-	BOOST_FOREACH(value const& v, result_n)
-		std::cout << bg::wkt<tPolygon>(polys[v.second]) << std::endl;
-
-	//   displayImage();
-	return 0;
-}
 
 int main() {
 
@@ -162,12 +73,14 @@ int main() {
 	visGraph = vg->addNewObstacleForIncrementalVisGraph(visGraph,obs);
 	obs=createObstacle("polygon((650 400,720 400,720 550,650 400))");//For Obs
 	visGraph = vg->addNewObstacleForIncrementalVisGraph(visGraph,obs);
+	visGraph = vg->removeDataPointFromVisGraph(visGraph,visGraph->searchObsWithString("polygon((600 600,600 600))"));
 
 	//Necessary Drawing
 	visGraph->print();
 	visEdges = visGraph->edges;
+	obsSide = visGraph->obsSides;
 	vector<Obstacle*> visObs = visGraph->obstacles;
-	//Draw the edge id in the image
+	//Draw the Obstacle Sides id in the image
 		for (int i = 0; i < obsSide.size(); i++) {
 			Line* l = obsSide[i];
 			drawText(((l->a->x) + (l->b->x)) / 2, ((l->a->y) + (l->b->y)) / 2,
@@ -188,12 +101,14 @@ int main() {
 
 	//Find the shortest path from two points using Dijkstra
 	//findShortestPath(visGraph, 40, 140, 600, 600);
-	findShortestPath(visGraph, 40, 140, 720, 550);
+	findShortestPath(visGraph, 40, 20, 720, 550);
+	//findShortestPath(visGraph,400,530 , 650, 400);
 	/* Calculate the time */
 	printf("Time elapsed: %f s\n",
 			((double) clock() - startTime) / CLOCKS_PER_SEC);
 
 	displayImage();
+
 
 	return 0;
 }
@@ -232,8 +147,8 @@ void drawObs(Obstacle* o, Point* ori) {
 	double *iterator = ps;
 	cimg_forX(points,i)
 	{
-		points(i, 0) = *(iterator++);
-		points(i, 1) = *(iterator++);
+		points(i, 0) = *(iterator++)*scale;
+		points(i, 1) = *(iterator++)*scale;
 	}
 	drawPolygon(points);
 

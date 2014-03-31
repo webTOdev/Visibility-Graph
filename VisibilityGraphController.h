@@ -78,6 +78,7 @@ public:
 			obstacleList=vGraph->obstacles;
 		}
 	VisibilityGraph* addNewObstacleForIncrementalVisGraph(VisibilityGraph* vg,Obstacle* obs);
+	VisibilityGraph* removeDataPointFromVisGraph(VisibilityGraph* vGraph, Obstacle* obs);
 };
 
 #endif /* VISIBILITYGRAPHCONTROLLER_H_ */

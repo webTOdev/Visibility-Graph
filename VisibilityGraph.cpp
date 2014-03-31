@@ -161,6 +161,51 @@ void VisibilityGraph::removeEdgeFromVisGraph(Line* l){
 	}
 }
 
+void VisibilityGraph::removeObsSideFromVisGraph(Line* l){
+	std::vector<Line*>::iterator it;
+	for (it = obsSides.begin(); it != obsSides.end() /* not hoisted */; /* no increment */)
+	{
+	    if ((*it)->a->id == l->a->id && (*it)->b->id == l->b->id)
+	    {
+	        it = obsSides.erase(it);
+	    }
+	    else
+	    {
+	        ++it;
+	    }
+	}
+}
+
+void VisibilityGraph::removeNodeFromVisGraph(Point* a){
+	std::vector<Point*>::iterator it;
+	for (it = nodes.begin(); it != nodes.end() /* not hoisted */; /* no increment */)
+	{
+	    if ((*it)->id == a->id)
+	    {
+	        it = nodes.erase(it);
+	    }
+	    else
+	    {
+	        ++it;
+	    }
+	}
+}
+
+void VisibilityGraph::removeObstacleFromVisGraph(Obstacle* obs){
+	std::vector<Obstacle*>::iterator it;
+	for (it = obstacles.begin(); it != obstacles.end() /* not hoisted */; /* no increment */)
+	{
+	    if ((*it)->id == obs->id)
+	    {
+	        it = obstacles.erase(it);
+	    }
+	    else
+	    {
+	        ++it;
+	    }
+	}
+}
+
 bool VisibilityGraph::edgeExists(Line* l){
 	for(int i=0;i<edges.size();i++){
 		if(edges[i]->a->id == l->a->id && edges[i]->b->id == l->b->id){
@@ -177,6 +222,18 @@ Line* VisibilityGraph::findEdgeWithPoints(Point* a,Point* b){
 		}
 	}
 	return NULL;
+}
+
+vector<Line*> VisibilityGraph::findEdgesWithThisPoint(Point* a){
+	vector<Line*> lines;
+	for (int i = 0; i < edges.size(); i++) {
+		if (edges[i]->a->id == a->id) {
+			lines.push_back(edges[i]);
+		} else if (edges[i]->b->id == a->id) {
+			lines.push_back(edges[i]);
+		}
+	}
+	return lines;
 }
 void  VisibilityGraph::insertEdgeInVisGraph(vector<Line*> lines){
 	edges.insert(edges.end(),lines.begin(),lines.end());
